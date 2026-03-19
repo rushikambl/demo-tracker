@@ -365,28 +365,31 @@ const firebaseConfig = {
   appId: "1:163914755343:web:079b349e1365f9a41a627a"
 };
 
+// ── STATUS ──
+function setFbStatus(state, label) {
+  const dot=document.getElementById('fb-dot');
+  const lbl=document.getElementById('fb-label');
+  if(dot) dot.className='fb-dot'+(state==='live'?' live':state==='error'?' error':'');
+  if(lbl) lbl.textContent=label;
+}
+_bridge.setFbStatus = setFbStatus;
+
+// ── INIT FIREBASE ──
 const firebaseApp = initializeApp(firebaseConfig);
 db = getFirestore(firebaseApp);
 setFbStatus('connecting','Connecting...');
 
 onSnapshot(collection(db,'leads'), snap => {
   leads = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  setFbStatus('live','Live');
+  setFbStatus('live','Live • '+leads.length+' leads');
   render();
 }, err => {
   setFbStatus('error','Error: '+err.code);
-  console.error(err);
+  console.error('Firestore error:', err);
 });
 
-_bridge.setFbStatus = function setFbStatus(state, label) {
-  const dot=document.getElementById('fb-dot');
-  const lbl=document.getElementById('fb-label');
-  dot.className='fb-dot'+(state==='live'?' live':state==='error'?' error':'');
-  lbl.textContent=label;
-}
-
 // ── TABS ──
-_bridge.go = window.go = function(tab) 
+_bridge.go = window.go = function(tab) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('p-'+tab).classList.add('active');
@@ -487,7 +490,7 @@ _bridge.setDtFilter = window.setDtFilter = d=>{dtFilter=d;render();};
 _bridge.setStFilter = window.setStFilter = (s,btn)=>{stFilter=s;document.querySelectorAll('#p-leads .chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();};
 
 // ── DETAIL ──
-_bridge.openDetail = window.openDetail = function(id) 
+_bridge.openDetail = window.openDetail = function(id) {
   const l=leads.find(x=>x.id===id); if(!l) return;
   rejectId=id;
   document.getElementById('d-name').textContent=l.name;
@@ -528,7 +531,7 @@ _bridge.confirmReject = window.confirmReject = async function() {
 };
 
 // ── ADD ──
-_bridge.openAdd = window.openAdd = function() 
+_bridge.openAdd = window.openAdd = function() {
   ['f-name','f-co','f-ph','f-sw','f-ref','f-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-st').value='call';
   document.getElementById('f-dd').value=td();
@@ -568,7 +571,7 @@ _bridge.saveLead = window.saveLead = async function() {
 };
 
 // ── UPDATE ──
-_bridge.openUpd = window.openUpd = function(id) 
+_bridge.openUpd = window.openUpd = function(id) {
   const l=leads.find(x=>x.id===id); if(!l) return;
   document.getElementById('u-id').value=id;
   document.getElementById('u-title').textContent=l.name;
@@ -607,7 +610,7 @@ async function updateLead(id, data) {
 }
 
 // ── TOAST ──
-_bridge.showToast = window.showToast = function(msg) 
+_bridge.showToast = window.showToast = function(msg) {
   const el=document.getElementById('toast');
   el.textContent=msg; el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),2400);
