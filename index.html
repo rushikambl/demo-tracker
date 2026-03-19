@@ -357,7 +357,18 @@ import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc
 const td  = () => new Date().toISOString().split('T')[0];
 const fmt = d => { if(!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}); };
 const fmtY= d => { if(!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); };
-const mDate=l => { if(!l.cd) return null; const d=new Date(l.cd+'T00:00:00'); d.setFullYear(d.getFullYear()+1); return d; };
+const mDate=l => {
+  if(!l.cd) return null;
+  const d=new Date(l.cd+'T00:00:00');
+  const day=d.getDate();
+  // If closed after 15th → maintenance starts 1st of NEXT month + 1 year
+  // If closed on or before 15th → maintenance starts 1st of SAME month + 1 year
+  let startYear=d.getFullYear(), startMonth=d.getMonth();
+  if(day>15) startMonth+=1; // move to next month
+  const base=new Date(startYear, startMonth, 1); // 1st of that month
+  base.setFullYear(base.getFullYear()+1); // + 1 year
+  return base;
+};
 const dl  = l => { const m=mDate(l); if(!m) return null; return Math.ceil((m-new Date())/86400000); };
 
 const hr=new Date().getHours();
