@@ -341,7 +341,7 @@ function showToast(m){_bridge.showToast&&_bridge.showToast(m)}
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── HELPERS ──
 const td  = () => new Date().toISOString().split('T')[0];
@@ -369,13 +369,12 @@ const firebaseApp = initializeApp(firebaseConfig);
 db = getFirestore(firebaseApp);
 setFbStatus('connecting','Connecting...');
 
-const q = query(collection(db,'leads'), orderBy('createdAt','desc'));
-onSnapshot(q, snap => {
-  leads = snap.docs.map(d=>({id:d.id,...d.data()}));
+onSnapshot(collection(db,'leads'), snap => {
+  leads = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   setFbStatus('live','Live');
   render();
 }, err => {
-  setFbStatus('error','Connection error');
+  setFbStatus('error','Error: '+err.code);
   console.error(err);
 });
 
