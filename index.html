@@ -15,47 +15,48 @@
 body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; max-width:430px; margin:0 auto; }
 
 /* HEADER */
-.hdr { padding:52px 24px 16px; background:var(--white); border-bottom:1px solid var(--line); }
+.hdr { padding:56px 24px 18px; background:var(--white); border-bottom:1px solid var(--line); }
 .hdr-row { display:flex; justify-content:space-between; align-items:flex-start; }
-.brand-sm { font-size:11px; color:var(--accent); font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
-.brand-lg { font-family:'DM Serif Display',serif; font-size:26px; color:var(--ink); line-height:1; }
-.greeting { font-size:12px; color:var(--muted); margin-top:3px; }
-.add-fab { width:40px; height:40px; background:var(--accent); border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none; color:#fff; font-size:22px; flex-shrink:0; transition:opacity 0.15s; font-family:'DM Sans',sans-serif; }
+.brand-sm { font-size:11px; color:var(--accent); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:5px; }
+.brand-lg { font-family:'DM Serif Display',serif; font-size:36px; color:var(--ink); line-height:1; font-weight:700; letter-spacing:-0.5px; }
+.greeting { font-size:13px; color:var(--muted); margin-top:5px; font-weight:400; }
+.add-fab { width:44px; height:44px; background:var(--accent); border-radius:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none; color:#fff; font-size:22px; flex-shrink:0; transition:all 0.15s; font-family:'DM Sans',sans-serif; box-shadow:0 4px 12px rgba(33,118,174,0.3); }
 .add-fab:active { opacity:0.75; }
 
 /* TABS — scrollable 5 tabs */
 .tabs { display:flex; background:var(--white); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; overflow-x:auto; scrollbar-width:none; }
 .tabs::-webkit-scrollbar { display:none; }
-.tab { flex-shrink:0; padding:12px 14px; font-size:12px; font-weight:500; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; background:none; border-top:none; border-left:none; border-right:none; font-family:'DM Sans',sans-serif; white-space:nowrap; }
+.tab { flex-shrink:0; padding:14px 16px; font-size:13px; font-weight:500; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; background:none; border-top:none; border-left:none; border-right:none; font-family:'DM Sans',sans-serif; white-space:nowrap; }
 .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 
 .body { padding:0 20px 100px; }
 
 /* SUMMARY */
 .summary { margin:20px 0 24px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.sum-card { background:var(--white); border-radius:var(--r); padding:16px; border:1px solid var(--line); }
-.sum-num { font-family:'DM Serif Display',serif; font-size:38px; line-height:1; margin-bottom:4px; }
-.sum-label { font-size:11px; color:var(--muted); font-weight:500; text-transform:uppercase; letter-spacing:0.4px; }
+.sum-card { background:var(--white); border-radius:20px; padding:20px; border:1px solid var(--line); box-shadow:0 2px 8px rgba(33,118,174,0.06); }
+.sum-num { font-family:'DM Serif Display',serif; font-size:44px; line-height:1; margin-bottom:6px; font-weight:700; }
+.sum-label { font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.6px; }
 .sum-card.hi { background:var(--accent); border-color:var(--accent); }
 .sum-card.hi .sum-num { color:#fff; }
 .sum-card.hi .sum-label { color:rgba(255,255,255,0.6); }
 
-.sec-label { font-size:11px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.sec-label { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
 
 /* LEAD LIST */
-.lead-list { display:flex; flex-direction:column; gap:1px; }
-.lead-row { background:var(--white); padding:15px 16px; display:flex; align-items:center; gap:13px; cursor:pointer; transition:opacity 0.15s; }
+.lead-list { display:flex; flex-direction:column; gap:2px; }
+.lead-row { background:var(--white); padding:16px 18px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:opacity 0.15s; }
 .lead-row:first-child { border-radius:var(--r) var(--r) 0 0; }
 .lead-row:last-child { border-radius:0 0 var(--r) var(--r); }
 .lead-row:only-child { border-radius:var(--r); }
+.lead-row { box-shadow:0 1px 3px rgba(33,118,174,0.05); }
 .lead-row:active { opacity:0.6; }
 .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:2px; }
 .dot.call { background:var(--accent); } .dot.demo { background:var(--amber); }
 .dot.cheque { background:var(--green); } .dot.cash { background:var(--amber); }
 .dot.rejected { background:var(--red); } .dot.maint { background:var(--red); }
 .lead-info { flex:1; min-width:0; }
-.lead-name { font-size:15px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.lead-sub { font-size:12px; color:var(--muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lead-name { font-size:16px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lead-sub { font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .lead-right { text-align:right; flex-shrink:0; }
 .lead-tag { font-size:11px; font-weight:500; padding:3px 9px; border-radius:6px; display:inline-block; margin-bottom:3px; }
 .lead-tag.call { background:#DDEEF9; color:var(--accent); }
@@ -85,7 +86,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .sheet { background:var(--white); border-radius:24px 24px 0 0; padding:20px 24px calc(40px + env(safe-area-inset-bottom,0px)); width:100%; max-height:92vh; overflow-y:auto; transform:translateY(100%); transition:transform 0.3s cubic-bezier(.32,.72,0,1); }
 .overlay.open .sheet { transform:translateY(0); }
 .handle { width:32px; height:3px; background:var(--line); border-radius:2px; margin:0 auto 20px; }
-.sheet-title { font-family:'DM Serif Display',serif; font-size:22px; margin-bottom:22px; color:var(--ink); }
+.sheet-title { font-family:'DM Serif Display',serif; font-size:26px; margin-bottom:22px; color:var(--ink); font-weight:700; }
 
 .field { margin-bottom:16px; }
 .field label { font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:7px; }
@@ -99,7 +100,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .btn-danger { width:100%; padding:14px; background:transparent; color:var(--red); border:1.5px solid #f0c8c5; border-radius:14px; font-size:15px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; margin-bottom:10px; }
 
 /* DETAIL */
-.detail-name { font-family:'DM Serif Display',serif; font-size:26px; margin-bottom:3px; }
+.detail-name { font-family:'DM Serif Display',serif; font-size:30px; margin-bottom:4px; font-weight:700; }
 .detail-co { font-size:14px; color:var(--muted); margin-bottom:22px; }
 .detail-row { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--line); font-size:14px; }
 .detail-row:last-of-type { border-bottom:none; }
@@ -341,7 +342,7 @@ function showToast(m){_bridge.showToast&&_bridge.showToast(m)}
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── HELPERS ──
 const td  = () => new Date().toISOString().split('T')[0];
@@ -516,8 +517,17 @@ _bridge.openDetail = window.openDetail = function(id) {
     ${isActive?`<button class="btn-primary" onclick="closeDetail();openUpd('${l.id}')">Update Status</button>`:''}
     ${l.pay==='cash'&&d!=null&&d<=30?`<button class="btn-ghost" style="margin-bottom:10px;border-color:var(--green);color:var(--green);" onclick="markDone('${l.id}')">✅ Maintenance Done</button>`:''}
   `;
-  document.getElementById('d-reject-btn-wrap').innerHTML=isActive
-    ?`<button class="btn-danger" onclick="document.getElementById('d-reject-box').style.display='block';document.getElementById('r-notes').value=''">✕ Mark as Rejected</button>`:'';
+  document.getElementById('d-reject-btn-wrap').innerHTML=`
+    ${isActive?`<button class="btn-danger" onclick="document.getElementById('d-reject-box').style.display='block';document.getElementById('r-notes').value=''">✕ Mark as Rejected</button>`:''}
+    <div id="d-delete-confirm" style="display:none;background:#FAEAE9;border-radius:14px;padding:16px;margin-bottom:10px;">
+      <p style="font-size:13px;color:var(--red);font-weight:600;margin-bottom:12px;">Delete this entry permanently?</p>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-ghost" style="margin:0;flex:1;" onclick="document.getElementById('d-delete-confirm').style.display='none'">Cancel</button>
+        <button class="btn-primary" style="margin:0;flex:1;background:var(--red);" onclick="deleteLead('${l.id}')">Delete</button>
+      </div>
+    </div>
+    <button class="btn-ghost" style="color:#C0392B;border-color:#f0c8c5;margin-top:6px;" onclick="document.getElementById('d-delete-confirm').style.display='block'">🗑 Delete Entry</button>
+  `;
   document.getElementById('detOv').classList.add('open');
 };
 _bridge.closeDetail = window.closeDetail=()=>document.getElementById('detOv').classList.remove('open');
@@ -528,6 +538,13 @@ _bridge.confirmReject = window.confirmReject = async function() {
   const data={st:'rejected',rejectReason:document.getElementById('r-reason').value,rejectNotes:document.getElementById('r-notes').value.trim()};
   await updateLead(rejectId, data);
   closeDetail(); showToast('Marked as rejected');
+};
+
+// ── DELETE ──
+_bridge.deleteLead = window.deleteLead = async function(id) {
+  if(!db) return;
+  await deleteDoc(doc(db,'leads',id));
+  closeDetail(); showToast('Entry deleted');
 };
 
 // ── ADD ──
