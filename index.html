@@ -272,6 +272,7 @@ body {
       <button class="filter-btn" onclick="setSt('call',this)">Call</button>
       <button class="filter-btn" onclick="setSt('demo',this)">Demo</button>
       <button class="filter-btn" onclick="setSt('closed',this)">Closed</button>
+      <button class="filter-btn" onclick="setSt('rejected',this)">Rejected</button>
     </div>
     <div class="lead-list" id="leads-list"></div>
   </div>
@@ -341,13 +342,29 @@ body {
     <div class="d-actions">
       <div id="d-action-btns"></div>
       <div class="confirm-box" id="d-confirm">
-        <p>Delete this lead? This cannot be undone.</p>
+        <p>Mark as Rejected</p>
+        <div class="field" style="text-align:left;margin-bottom:12px;">
+          <label>Reason for Rejection</label>
+          <select id="reject-reason" style="width:100%;padding:11px 12px;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;color:var(--ink);font-size:14px;font-family:'DM Sans',sans-serif;-webkit-appearance:none;appearance:none;outline:none;">
+            <option value="Too expensive">Too expensive</option>
+            <option value="Not interested">Not interested</option>
+            <option value="Using competitor software">Using competitor software</option>
+            <option value="No budget right now">No budget right now</option>
+            <option value="Need more time">Need more time</option>
+            <option value="Feature not available">Feature not available</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field" style="text-align:left;margin-bottom:14px;">
+          <label>Extra Notes (optional)</label>
+          <input type="text" id="reject-notes" placeholder="Any additional info..." style="width:100%;padding:11px 12px;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;color:var(--ink);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;">
+        </div>
         <div class="confirm-row">
           <button class="btn-ghost" style="margin:0;" onclick="document.getElementById('d-confirm').style.display='none'">Cancel</button>
-          <button class="btn-primary" style="margin:0;background:var(--red);" onclick="confirmDelete()">Delete</button>
+          <button class="btn-primary" style="margin:0;background:var(--red);" onclick="confirmReject()">Mark Rejected</button>
         </div>
       </div>
-      <button class="btn-danger" onclick="document.getElementById('d-confirm').style.display='block'">🗑 Delete Lead</button>
+      <span id="d-reject-btn"></span>
     </div>
   </div>
 </div>
@@ -363,6 +380,7 @@ body {
         <option value="call">To Call</option>
         <option value="demo">Demo</option>
         <option value="closed">Closed</option>
+        <option value="rejected">Rejected</option>
       </select>
     </div>
     <div id="u-dd-wrap" style="display:none;">
@@ -408,18 +426,7 @@ const save= () => localStorage.setItem('es-leads', JSON.stringify(leads));
 const hr = new Date().getHours();
 document.getElementById('greeting').textContent = (hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', Nilesh 👋';
 
-// Seed demo data
-if (!leads.length) {
-  const t=td(), yd=new Date(Date.now()-86400000).toISOString().split('T')[0], yr=new Date(Date.now()-364*86400000).toISOString().split('T')[0];
-  leads=[
-    {id:1,name:'Ramesh Patel',co:'Patel Traders',ph:'9876543210',sw:'Billing Software',ref:'Suresh Bhai',st:'demo',dd:t,dtype:'offline',pay:null,amt:null,cd:null,notes:'Very interested'},
-    {id:2,name:'Sunita Mehta',co:'Mehta & Sons',ph:'9988776655',sw:'Loom',ref:'',st:'call',dd:null,dtype:null,pay:null,amt:null,cd:null,notes:''},
-    {id:3,name:'Karim Shaikh',co:'Shaikh Pharma',ph:'9765432100',sw:'Acc Dyeing',ref:'',st:'closed',dd:yd,dtype:'online',pay:'cash',amt:30000,cd:yr,notes:''},
-    {id:4,name:'Priya Joshi',co:'Joshi Fabrics',ph:'9123456789',sw:'Loom',ref:'Nilesh',st:'closed',dd:yd,dtype:'offline',pay:'cheque',amt:45000,cd:yd,notes:''},
-    {id:5,name:'Vikram Desai',co:'Desai Exports',ph:'9811223344',sw:'Billing Software',ref:'',st:'demo',dd:t,dtype:'online',pay:null,amt:null,cd:null,notes:'Demo on Zoom'},
-    {id:6,name:'Anjali Kumar',co:'Kumar Retail',ph:'9900112233',sw:'Acc Dyeing',ref:'',st:'call',dd:null,dtype:null,pay:null,amt:null,cd:null,notes:''},
-  ]; save();
-}
+
 
 // ── TABS ──
 function go(tab) {
@@ -435,6 +442,7 @@ function go(tab) {
 function tagFor(l) {
   if(l.st==='call') return {cls:'call',txt:'To Call'};
   if(l.st==='demo') return {cls:'demo',txt:'Demo'};
+  if(l.st==='rejected') return {cls:'maint',txt:'Rejected'};
   return l.pay==='cheque'?{cls:'cheque',txt:'Cheque'}:{cls:'cash',txt:'Cash'};
 }
 
@@ -481,7 +489,7 @@ function render() {
   // leads list
   let f=leads;
   if(dtFilter!=='all') f=f.filter(l=>l.dd===dtFilter);
-  if(stFilter!=='all') f=f.filter(l=>stFilter==='closed'?l.st==='closed':l.st===stFilter);
+  if(stFilter!=='all') f=f.filter(l=>l.st===stFilter);
   document.getElementById('leads-list').innerHTML=f.length?f.map(rowHTML).join(''):`<div class="empty">No leads found</div>`;
 
   // maint list
@@ -523,20 +531,27 @@ function openDetail(id) {
     ${l.cd?`<div class="detail-row"><span>Closed On</span><span>${fmtY(l.cd)}</span></div>`:''}
     ${m?`<div class="detail-row"><span>Maintenance</span><span style="color:${d!=null&&d<=30?'var(--red)':'inherit'}">${fmtY(m.toISOString().split('T')[0])}${d!=null?' ('+d+'d)':''}</span></div>`:''}
     ${l.notes?`<div class="detail-row"><span>Notes</span><span>${l.notes}</span></div>`:''}
+    ${l.rejectReason?`<div class="detail-row"><span>Rejected — Reason</span><span style="color:var(--red)">${l.rejectReason}</span></div>`:''}
+    ${l.rejectNotes?`<div class="detail-row"><span>Reject Notes</span><span>${l.rejectNotes}</span></div>`:''}
   `;
   document.getElementById('d-action-btns').innerHTML=`
     <a href="tel:${l.ph}" class="btn-ghost" style="margin-bottom:10px;display:block;text-align:center;text-decoration:none;">📞 Call</a>
-    ${l.st!=='closed'?`<button class="btn-primary" onclick="closeDetail();openUpd(${l.id})">Update Status</button>`:''}
+    ${l.st!=='closed'&&l.st!=='rejected'?`<button class="btn-primary" onclick="closeDetail();openUpd(${l.id})">Update Status</button>`:''}
     ${l.pay==='cash'&&d!=null&&d<=30?`<button class="btn-ghost" style="margin-bottom:10px;border-color:#1E7A5F;color:#1E7A5F;" onclick="markDone(${l.id})">✅ Maintenance Done</button>`:''}
   `;
+  const rejectBtn = document.getElementById('d-reject-btn');
+  if(rejectBtn) rejectBtn.innerHTML = l.st!=='rejected' ? '<button class="btn-danger" onclick="document.getElementById(\'d-confirm\').style.display=\'block\';document.getElementById(\'reject-notes\').value=\'\'" style="width:100%;margin-top:10px;">✕ Mark as Rejected</button>' : '';
   document.getElementById('detOv').classList.add('open');
 }
 function closeDetail(){document.getElementById('detOv').classList.remove('open');}
 
-function confirmDelete() {
+function confirmReject() {
   if(!deleteId) return;
-  leads=leads.filter(x=>x.id!==deleteId);
-  save(); closeDetail(); render(); showToast('Lead deleted');
+  const i=leads.findIndex(x=>x.id===deleteId); if(i<0) return;
+  leads[i].st='rejected';
+  leads[i].rejectReason=document.getElementById('reject-reason').value;
+  leads[i].rejectNotes=document.getElementById('reject-notes').value.trim();
+  save(); closeDetail(); render(); showToast('Marked as rejected');
 }
 
 // ── ADD ──
