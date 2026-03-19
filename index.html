@@ -58,6 +58,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .dot.call { background:var(--accent); } .dot.demo { background:var(--amber); }
 .dot.cheque { background:var(--green); } .dot.cash { background:var(--amber); }
 .dot.rejected { background:var(--red); } .dot.maint { background:var(--red); }
+.dot.given { background:#7C3AED; } .dot.changes { background:#D97706; } .dot.redemo { background:#0891B2; }
 .lead-info { flex:1; min-width:0; }
 .lead-name { font-size:16px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .lead-sub { font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -68,6 +69,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .lead-tag.cheque { background:#E2F4EE; color:var(--green); }
 .lead-tag.cash { background:#FBF3E8; color:var(--amber); }
 .lead-tag.rejected { background:#FAEAE9; color:var(--red); }
+.lead-tag.given { background:#F3F0FF; color:#7C3AED; }
+.lead-tag.changes { background:#FEF3C7; color:#D97706; }
+.lead-tag.redemo { background:#E0F7FA; color:#0891B2; }
 .lead-date { font-size:11px; color:var(--muted); }
 
 /* ALERTS */
@@ -83,6 +87,14 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .chip.active { border-color:var(--accent); background:var(--accent); color:#fff; }
 
 .empty { text-align:center; padding:48px 24px; color:var(--muted); font-size:14px; }
+
+/* SEARCH */
+.search-wrap { position:relative; margin:18px 0 14px; }
+.search-wrap svg { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
+.search-input { width:100%; padding:13px 14px 13px 42px; background:var(--white); border:1.5px solid var(--line); border-radius:14px; color:var(--ink); font-size:15px; font-family:'DM Sans',sans-serif; outline:none; transition:border-color 0.15s; box-shadow:0 2px 8px rgba(33,118,174,0.06); }
+.search-input:focus { border-color:var(--accent); }
+.search-input::placeholder { color:var(--muted); }
+.search-clear { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; display:none; padding:0; line-height:1; }
 
 /* OVERLAY */
 .overlay { position:fixed; inset:0; background:rgba(18,48,79,0.3); z-index:200; display:flex; align-items:flex-end; opacity:0; pointer-events:none; transition:opacity 0.25s; backdrop-filter:blur(3px); }
@@ -184,14 +196,21 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
     <div class="lead-list" id="today-list"></div>
   </div>
 
-  <!-- ALL LEADS (call + demo only) -->
+  <!-- ALL LEADS -->
   <div id="p-leads" class="panel">
-    <div style="height:18px;"></div>
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="search-input" type="text" placeholder="Search name, company, software..." oninput="onSearch(this.value)">
+      <button class="search-clear" id="search-clear" onclick="clearSearch()">×</button>
+    </div>
     <div class="chip-row" id="date-chips"></div>
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
       <button class="chip active" onclick="setStFilter('all',this)">All</button>
       <button class="chip" onclick="setStFilter('call',this)">To Call</button>
-      <button class="chip" onclick="setStFilter('demo',this)">Demo</button>
+      <button class="chip" onclick="setStFilter('demo',this)">Demo Scheduled</button>
+      <button class="chip" onclick="setStFilter('given',this)">Demo Given</button>
+      <button class="chip" onclick="setStFilter('changes',this)">Changes</button>
+      <button class="chip" onclick="setStFilter('redemo',this)">Re-Demo</button>
     </div>
     <div class="lead-list" id="leads-list"></div>
   </div>
@@ -226,7 +245,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
     <div class="field"><label>Status</label>
       <select id="f-st" onchange="handleAdd()">
         <option value="call">To Call</option>
-        <option value="demo">Demo</option>
+        <option value="demo">Demo Scheduled</option>
+        <option value="given">Demo Given</option>
+        <option value="changes">Changes Requested</option>
+        <option value="redemo">Re-Demo Scheduled</option>
         <option value="closed">Closed</option>
       </select>
     </div>
@@ -299,7 +321,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
     <div class="field"><label>Status</label>
       <select id="u-st" onchange="handleUpd()">
         <option value="call">To Call</option>
-        <option value="demo">Demo</option>
+        <option value="demo">Demo Scheduled</option>
+        <option value="given">Demo Given</option>
+        <option value="changes">Changes Requested</option>
+        <option value="redemo">Re-Demo Scheduled</option>
         <option value="closed">Closed</option>
       </select>
     </div>
@@ -325,6 +350,52 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
   </div>
 </div>
 
+
+<!-- EDIT LEAD -->
+<div class="overlay" id="editOv">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title">Edit Lead</div>
+    <input type="hidden" id="e-id">
+    <div class="field"><label>Name</label><input id="e-name" type="text"></div>
+    <div class="field"><label>Company</label><input id="e-co" type="text"></div>
+    <div class="field"><label>Phone</label><input id="e-ph" type="tel"></div>
+    <div class="field"><label>Software</label><input id="e-sw" type="text" placeholder="e.g. Loom, Acc Dyeing, Billing..."></div>
+    <div class="field"><label>Reference Person</label><input id="e-ref" type="text"></div>
+    <div class="field"><label>Status</label>
+      <select id="e-st" onchange="handleEdit()">
+        <option value="call">To Call</option>
+        <option value="demo">Demo Scheduled</option>
+        <option value="given">Demo Given</option>
+        <option value="changes">Changes Requested</option>
+        <option value="redemo">Re-Demo Scheduled</option>
+        <option value="closed">Closed</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+    <div id="e-demo-wrap" style="display:none;">
+      <div class="two">
+        <div class="field"><label>Demo Date</label><input id="e-dd" type="date"></div>
+        <div class="field"><label>Demo Type</label>
+          <select id="e-dtype"><option value="offline">Offline</option><option value="online">Online</option></select>
+        </div>
+      </div>
+    </div>
+    <div id="e-pay-wrap" style="display:none;">
+      <div class="two">
+        <div class="field"><label>Payment</label>
+          <select id="e-pay"><option value="cheque">Cheque</option><option value="cash">Cash</option></select>
+        </div>
+        <div class="field"><label>Amount ₹</label><input id="e-amt" type="number"></div>
+      </div>
+      <div class="field"><label>Closing Date</label><input id="e-cd" type="date"></div>
+    </div>
+    <div class="field"><label>Notes</label><input id="e-notes" type="text" placeholder="Optional..."></div>
+    <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+    <button class="btn-ghost" onclick="closeEdit()">Cancel</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- Global function bridge (module scope fix) -->
@@ -346,6 +417,14 @@ function markDone(id){_bridge.markDone&&_bridge.markDone(id)}
 function setDtFilter(d){_bridge.setDtFilter&&_bridge.setDtFilter(d)}
 function setStFilter(s,btn){_bridge.setStFilter&&_bridge.setStFilter(s,btn)}
 function showToast(m){_bridge.showToast&&_bridge.showToast(m)}
+function openEdit(id){_bridge.openEdit&&_bridge.openEdit(id)}
+function closeEdit(){_bridge.closeEdit&&_bridge.closeEdit()}
+function handleEdit(){_bridge.handleEdit&&_bridge.handleEdit()}
+function saveEdit(){_bridge.saveEdit&&_bridge.saveEdit()}
+function deleteLead(id){_bridge.deleteLead&&_bridge.deleteLead(id)}
+function onSearch(v){_bridge.onSearch&&_bridge.onSearch(v)}
+function clearSearch(){_bridge.clearSearch&&_bridge.clearSearch()}
+function refreshData(){_bridge.refreshData&&_bridge.refreshData()}
 </script>
 
 <!-- Firebase SDK -->
@@ -370,11 +449,12 @@ const mDate=l => {
   return base;
 };
 const dl  = l => { const m=mDate(l); if(!m) return null; return Math.ceil((m-new Date())/86400000); };
+const fmtDate = d => d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
 
 const hr=new Date().getHours();
 document.getElementById('greeting').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', Nilesh 👋';
 
-let leads=[], db=null, rejectId=null, stFilter='all', dtFilter='all';
+let leads=[], db=null, rejectId=null, stFilter='all', dtFilter='all', searchQ='';
 
 // ── FIREBASE CONFIG ──
 const firebaseConfig = {
@@ -423,6 +503,9 @@ _bridge.go = window.go = function(tab) {
 function tagFor(l) {
   if(l.st==='call')     return {cls:'call',     txt:'To Call'};
   if(l.st==='demo')     return {cls:'demo',     txt:'Demo'};
+  if(l.st==='given')    return {cls:'given',    txt:'Demo Given'};
+  if(l.st==='changes')  return {cls:'changes',  txt:'Changes'};
+  if(l.st==='redemo')   return {cls:'redemo',   txt:'Re-Demo'};
   if(l.st==='rejected') return {cls:'rejected', txt:'Rejected'};
   return l.pay==='cheque'?{cls:'cheque',txt:'Cheque'}:{cls:'cash',txt:'Cash'};
 }
@@ -463,14 +546,18 @@ function render() {
   document.getElementById('today-list').innerHTML=demos.length?demos.map(rowHTML).join(''):`<div class="empty">No demos scheduled today</div>`;
 
   // All leads (call + demo only — NOT closed or rejected)
-  const dates=[...new Set(leads.filter(l=>l.st==='call'||l.st==='demo').map(l=>l.dd).filter(Boolean))].sort().reverse();
+  const dates=[...new Set(leads.filter(l=>['call','demo','given','changes','redemo'].includes(l.st)).map(l=>l.dd).filter(Boolean))].sort().reverse();
   document.getElementById('date-chips').innerHTML=
     `<button class="chip ${dtFilter==='all'?'active':''}" onclick="setDtFilter('all')">All</button>`+
     dates.map(d=>`<button class="chip ${dtFilter===d?'active':''}" onclick="setDtFilter('${d}')">${d===t?'Today':fmt(d)}</button>`).join('');
 
-  let active=leads.filter(l=>l.st==='call'||l.st==='demo');
+  let active=leads.filter(l=>['call','demo','given','changes','redemo'].includes(l.st));
   if(dtFilter!=='all') active=active.filter(l=>l.dd===dtFilter);
   if(stFilter!=='all') active=active.filter(l=>l.st===stFilter);
+  if(searchQ) {
+    const q=searchQ.toLowerCase();
+    active=active.filter(l=>(l.name||'').toLowerCase().includes(q)||(l.co||'').toLowerCase().includes(q)||(l.sw||'').toLowerCase().includes(q)||(l.ph||'').includes(q));
+  }
   document.getElementById('leads-list').innerHTML=active.length?active.map(rowHTML).join(''):`<div class="empty">No leads found</div>`;
 
   // Rejected tab
@@ -497,7 +584,7 @@ function render() {
       <div class="dot ${ov?'maint':'cash'}"></div>
       <div class="lead-info">
         <div class="lead-name">${l.name}</div>
-        <div class="lead-sub">${l.co||''} · Due ${fmtY(m?.toISOString().split('T')[0])}</div>
+        <div class="lead-sub">${l.co||''} · Due ${fmtDate(m)}</div>
       </div>
       <div class="lead-right">
         <div class="lead-tag ${ov?'rejected':'cash'}">${d==null?'—':ov?'Overdue':d===0?'Today':d+'d left'}</div>
@@ -526,15 +613,16 @@ _bridge.openDetail = window.openDetail = function(id) {
     ${l.dd?`<div class="detail-row"><span>Demo Date</span><span>${fmtY(l.dd)}${l.dtype?' · '+l.dtype.charAt(0).toUpperCase()+l.dtype.slice(1):''}</span></div>`:''}
     ${l.amt?`<div class="detail-row"><span>Amount</span><span>₹${Number(l.amt).toLocaleString('en-IN')}</span></div>`:''}
     ${l.cd?`<div class="detail-row"><span>Closed On</span><span>${fmtY(l.cd)}</span></div>`:''}
-    ${m?`<div class="detail-row"><span>Maintenance</span><span style="color:${d!=null&&d<=30?'var(--red)':'inherit'}">${fmtY(m.toISOString().split('T')[0])}${d!=null?' ('+d+'d)':''}</span></div>`:''}
+    ${m?`<div class="detail-row"><span>Maintenance</span><span style="color:${d!=null&&d<=30?'var(--red)':'inherit'}">${fmtDate(m)}${d!=null?' ('+d+'d)':''}</span></div>`:''}
     ${l.rejectReason?`<div class="detail-row"><span>Rejected — Reason</span><span style="color:var(--red)">${l.rejectReason}</span></div>`:''}
     ${l.rejectNotes?`<div class="detail-row"><span>Reject Notes</span><span>${l.rejectNotes}</span></div>`:''}
     ${l.notes?`<div class="detail-row"><span>Notes</span><span>${l.notes}</span></div>`:''}
   `;
-  const isActive = l.st==='call'||l.st==='demo';
+  const isActive = ['call','demo','given','changes','redemo'].includes(l.st);
   document.getElementById('d-action-btns').innerHTML=`
     <a href="tel:${l.ph}" class="btn-ghost" style="margin-bottom:10px;display:block;text-align:center;text-decoration:none;">📞 Call</a>
     ${isActive?`<button class="btn-primary" onclick="closeDetail();openUpd('${l.id}')">Update Status</button>`:''}
+    <button class="btn-ghost" style="margin-bottom:10px;" onclick="closeDetail();openEdit('${l.id}')">✏️ Edit Entry</button>
     ${l.pay==='cash'&&d!=null&&d<=30?`<button class="btn-ghost" style="margin-bottom:10px;border-color:var(--green);color:var(--green);" onclick="markDone('${l.id}')">✅ Maintenance Done</button>`:''}
   `;
   document.getElementById('d-reject-btn-wrap').innerHTML=`
@@ -560,6 +648,54 @@ _bridge.confirmReject = window.confirmReject = async function() {
   closeDetail(); showToast('Marked as rejected');
 };
 
+
+// ── EDIT ──
+_bridge.openEdit = window.openEdit = function(id) {
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  document.getElementById('e-id').value=id;
+  document.getElementById('e-name').value=l.name||'';
+  document.getElementById('e-co').value=l.co||'';
+  document.getElementById('e-ph').value=l.ph||'';
+  document.getElementById('e-sw').value=l.sw||'';
+  document.getElementById('e-ref').value=l.ref||'';
+  document.getElementById('e-st').value=l.st||'call';
+  document.getElementById('e-dd').value=l.dd||td();
+  document.getElementById('e-dtype').value=l.dtype||'offline';
+  document.getElementById('e-pay').value=l.pay||'cheque';
+  document.getElementById('e-amt').value=l.amt||'';
+  document.getElementById('e-cd').value=l.cd||td();
+  document.getElementById('e-notes').value=l.notes||'';
+  handleEdit();
+  document.getElementById('editOv').classList.add('open');
+};
+_bridge.closeEdit = window.closeEdit = ()=>document.getElementById('editOv').classList.remove('open');
+_bridge.handleEdit = window.handleEdit = ()=>{
+  const st=document.getElementById('e-st').value;
+  document.getElementById('e-demo-wrap').style.display=(st==='demo'||st==='redemo')?'block':'none';
+  document.getElementById('e-pay-wrap').style.display=st==='closed'?'block':'none';
+};
+_bridge.saveEdit = window.saveEdit = async function() {
+  const id=document.getElementById('e-id').value;
+  const name=document.getElementById('e-name').value.trim();
+  const ph=document.getElementById('e-ph').value.trim();
+  if(!name||!ph){showToast('Name & phone required');return;}
+  const st=document.getElementById('e-st').value;
+  const data={
+    name, co:document.getElementById('e-co').value.trim(), ph,
+    sw:document.getElementById('e-sw').value.trim(),
+    ref:document.getElementById('e-ref').value.trim(),
+    st,
+    dd:st==='demo'?document.getElementById('e-dd').value:null,
+    dtype:st==='demo'?document.getElementById('e-dtype').value:null,
+    pay:st==='closed'?document.getElementById('e-pay').value:null,
+    amt:st==='closed'?document.getElementById('e-amt').value:null,
+    cd:st==='closed'?document.getElementById('e-cd').value:null,
+    notes:document.getElementById('e-notes').value.trim(),
+  };
+  await updateLead(id, data);
+  closeEdit(); showToast('Entry updated');
+};
+
 // ── DELETE ──
 _bridge.deleteLead = window.deleteLead = async function(id) {
   if(!db) return;
@@ -582,7 +718,7 @@ _bridge.openAdd = window.openAdd = function() {
 _bridge.closeAdd = window.closeAdd=()=>document.getElementById('addOv').classList.remove('open');
 _bridge.handleAdd = window.handleAdd=()=>{
   const st=document.getElementById('f-st').value;
-  document.getElementById('f-demo-wrap').style.display=st==='demo'?'block':'none';
+  document.getElementById('f-demo-wrap').style.display=(st==='demo'||st==='redemo')?'block':'none';
   document.getElementById('f-pay-wrap').style.display=st==='closed'?'block':'none';
 };
 _bridge.saveLead = window.saveLead = async function() {
@@ -595,8 +731,8 @@ _bridge.saveLead = window.saveLead = async function() {
     sw:document.getElementById('f-sw').value.trim(),
     ref:document.getElementById('f-ref').value.trim(),
     st,
-    dd:st==='demo'?document.getElementById('f-dd').value:null,
-    dtype:st==='demo'?document.getElementById('f-dtype').value:null,
+    dd:(st==='demo'||st==='redemo')?document.getElementById('f-dd').value:null,
+    dtype:(st==='demo'||st==='redemo')?document.getElementById('f-dtype').value:null,
     pay:st==='closed'?document.getElementById('f-pay').value:null,
     amt:st==='closed'?document.getElementById('f-amt').value:null,
     cd:st==='closed'?document.getElementById('f-cd').value:null,
@@ -624,14 +760,14 @@ _bridge.openUpd = window.openUpd = function(id) {
 _bridge.closeUpd = window.closeUpd=()=>document.getElementById('updOv').classList.remove('open');
 _bridge.handleUpd = window.handleUpd=()=>{
   const s=document.getElementById('u-st').value;
-  document.getElementById('u-dd-wrap').style.display=s==='demo'?'block':'none';
+  document.getElementById('u-dd-wrap').style.display=(s==='demo'||s==='redemo')?'block':'none';
   document.getElementById('u-pay-wrap').style.display=s==='closed'?'block':'none';
 };
 _bridge.saveUpd = window.saveUpd = async function() {
   const id=document.getElementById('u-id').value;
   const st=document.getElementById('u-st').value;
   const data={st};
-  if(st==='demo'){data.dd=document.getElementById('u-dd').value;data.dtype=document.getElementById('u-dtype').value;}
+  if(st==='demo'||st==='redemo'){data.dd=document.getElementById('u-dd').value;data.dtype=document.getElementById('u-dtype').value;}
   if(st==='closed'){data.pay=document.getElementById('u-pay').value;data.amt=document.getElementById('u-amt').value;data.cd=document.getElementById('u-cd').value;}
   await updateLead(id,data);
   closeUpd(); showToast('Updated');
@@ -647,7 +783,37 @@ async function updateLead(id, data) {
 }
 
 // ── TOAST ──
-_bridge.showToast = _bridge.refreshData = window.refreshData = function() {
+_bridge.showToast = _bridge.onSearch = window.onSearch = function(val) {
+  searchQ=val.trim();
+  const clr=document.getElementById('search-clear');
+  if(clr) clr.style.display=val?'block':'none';
+  renderLeadsList();
+};
+_bridge.clearSearch = window.clearSearch = function() {
+  searchQ='';
+  const inp=document.getElementById('search-input');
+  const clr=document.getElementById('search-clear');
+  if(inp) inp.value='';
+  if(clr) clr.style.display='none';
+  renderLeadsList();
+};
+function renderLeadsList() {
+  const t=td();
+  const dates=[...new Set(leads.filter(l=>['call','demo','given','changes','redemo'].includes(l.st)).map(l=>l.dd).filter(Boolean))].sort().reverse();
+  document.getElementById('date-chips').innerHTML=
+    `<button class="chip ${dtFilter==='all'?'active':''}" onclick="setDtFilter('all')">All</button>`+
+    dates.map(d=>`<button class="chip ${dtFilter===d?'active':''}" onclick="setDtFilter('${d}')">${d===t?'Today':fmt(d)}</button>`).join('');
+  let active=leads.filter(l=>['call','demo','given','changes','redemo'].includes(l.st));
+  if(dtFilter!=='all') active=active.filter(l=>l.dd===dtFilter);
+  if(stFilter!=='all') active=active.filter(l=>l.st===stFilter);
+  if(searchQ) {
+    const q=searchQ.toLowerCase();
+    active=active.filter(l=>(l.name||'').toLowerCase().includes(q)||(l.co||'').toLowerCase().includes(q)||(l.sw||'').toLowerCase().includes(q)||(l.ph||'').includes(q));
+  }
+  document.getElementById('leads-list').innerHTML=active.length?active.map(rowHTML).join(''):`<div class="empty">No leads found</div>`;
+}
+
+_bridge.refreshData = window.refreshData = function() {
   const btn = document.getElementById('refreshBtn');
   btn.classList.add('spinning');
   setTimeout(()=>btn.classList.remove('spinning'), 700);
@@ -661,7 +827,7 @@ window.showToast = function(msg) {
   setTimeout(()=>el.classList.remove('show'),2400);
 };
 
-['addOv','detOv','updOv'].forEach(id=>{
+['addOv','detOv','updOv','editOv'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 });
 </script>
