@@ -2,395 +2,381 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Equal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1F2A6B">
+<title>Equal · Demo Tracker</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
 
 * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 
 :root {
-  --bg: #F5F7FA;
-  --card: #FFFFFF;
-  --navy: #0B1E3D;
-  --navy2: #16305A;
-  --blue: #1A56DB;
-  --muted: #94A3B8;
-  --line: #E2E8F0;
-  --ink: #0F172A;
-  --green: #10B981;
-  --orange: #F59E0B;
-  --red: #EF4444;
-  --purple: #8B5CF6;
-  --teal: #06B6D4;
+  --paper:   #F2F3EE;
+  --card:    #FFFFFF;
+  --indigo:  #1F2A6B;
+  --indigo2: #2B3784;
+  --ink:     #15171F;
+  --ink2:    #4A4E5C;
+  --muted:   #8A8E99;
+  --line:    #E3E4DD;
+  --turmeric:#E3A62B;
+  --madder:  #B8342B;
+  --leaf:    #2F7D5B;
+  --accent:  #2B3784;
+  --red:     #B8342B;
+  --green:   #2F7D5B;
+  --r-lg: 22px; --r-md: 14px; --r-sm: 10px;
 }
 
+html { background: var(--paper); }
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-  background: var(--bg);
+  font-family: 'Bricolage Grotesque', -apple-system, system-ui, sans-serif;
+  font-optical-sizing: auto;
+  background: var(--paper);
   color: var(--ink);
   min-height: 100vh;
   max-width: 430px;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
 }
+button, input, select { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--turmeric); outline-offset: 2px; }
 
-/* ══ HEADER CARD ══ */
+/* ══ HEADER — indigo woven panel ══ */
 .hdr {
-  margin: 0;
-  padding: 52px 20px 20px;
-  background: var(--card);
-  border-bottom: 1px solid var(--line);
+  position: relative; overflow: hidden;
+  padding: calc(18px + env(safe-area-inset-top,0px)) 20px 22px;
+  background: var(--indigo); color: #fff;
+  border-radius: 0 0 28px 28px;
 }
-.hdr-top { display:flex; justify-content:space-between; align-items:flex-start; }
+.hdr::before {
+  content:''; position:absolute; inset:0; pointer-events:none; opacity:.55;
+  background-image:
+    repeating-linear-gradient(0deg,  rgba(255,255,255,.045) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.10) 0 2px, transparent 2px 5px);
+}
+.hdr > * { position: relative; }
+.hdr-top { display:flex; justify-content:space-between; align-items:center; }
+.brand { display:flex; align-items:baseline; gap:8px; }
+.brand-lg { font-size: 22px; font-weight: 800; letter-spacing: -0.6px; }
+.brand-sm { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.6); }
 
-/* name card */
-.hdr-left {}
-.brand-sm {
-  font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--blue); margin-bottom: 2px;
+.hdr-btns { display:flex; gap:8px; align-items:center; }
+.fb-status {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size: 12px; color: rgba(255,255,255,.7);
+  padding: 6px 10px; border-radius: 20px; background: rgba(255,255,255,.08);
 }
-.brand-lg {
-  font-size: 38px; font-weight: 800; color: var(--navy);
-  letter-spacing: -1.5px; line-height: 1;
-}
-.greeting {
-  font-size: 14px; color: var(--muted); margin-top: 5px; font-weight: 400;
-}
-.greeting strong { color: var(--navy); font-weight: 700; }
-
-.hdr-btns { display:flex; gap:8px; padding-top:6px; }
+.fb-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.35); flex-shrink:0; }
+.fb-dot.live { background: #6EE7A8; box-shadow: 0 0 0 3px rgba(110,231,168,.18); }
+.fb-dot.error { background: #FF8A80; }
 .icon-btn {
-  width: 40px; height: 40px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  border: none; cursor: pointer; transition: all 0.15s; flex-shrink:0;
+  width: 36px; height: 36px; border-radius: 12px;
+  display:flex; align-items:center; justify-content:center;
+  border: none; cursor: pointer; background: rgba(255,255,255,.1); color:#fff;
+  transition: transform .15s, background .15s;
 }
-.icon-btn.primary { background: var(--navy); color: #fff; box-shadow: 0 4px 14px rgba(11,30,61,0.25); }
-.icon-btn.secondary { background: var(--bg); color: var(--navy); }
-.icon-btn:active { opacity: 0.7; transform: scale(0.95); }
-.icon-btn.spinning svg { animation: spin 0.7s linear infinite; }
+.icon-btn:active { transform: scale(.94); background: rgba(255,255,255,.18); }
+.icon-btn.spinning svg { animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* fb status */
-.fb-status {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 11px; color: var(--muted); margin-top: 10px;
-  background: var(--bg); padding: 4px 10px; border-radius: 20px;
-  width: fit-content;
-}
-.fb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); flex-shrink:0; }
-.fb-dot.live { background: var(--green); }
-.fb-dot.error { background: var(--red); }
+.hero { margin-top: 26px; }
+.hero-date { font-size: 13px; color: rgba(255,255,255,.6); font-weight: 500; }
+.greeting { font-size: 30px; font-weight: 700; letter-spacing: -1px; line-height: 1.1; margin-top: 4px; }
+.hero-line { font-size: 17px; color: rgba(255,255,255,.82); margin-top: 8px; line-height: 1.4; max-width: 30ch; }
+.hero-line b { color:#fff; font-weight: 700; }
 
-/* ══ TABS ══ */
+/* pipeline bar */
+.pipe { margin-top: 22px; }
+.pipe-bar { display:flex; gap:3px; height: 10px; border-radius: 6px; overflow:hidden; }
+.pipe-seg { min-width: 6px; transition: flex-grow .4s ease; border:none; cursor:pointer; padding:0; }
+.pipe-legend { display:grid; grid-template-columns: repeat(5,1fr); gap: 4px; margin-top: 12px; }
+.pipe-item {
+  background:none; border:none; color:#fff; text-align:left; cursor:pointer;
+  padding: 6px 4px 6px 0; border-radius: 8px;
+}
+.pipe-item:active { opacity:.7; }
+.pipe-n { font-size: 20px; font-weight: 700; letter-spacing:-.5px; display:flex; align-items:center; gap:5px; }
+.pipe-n i { width:7px; height:7px; border-radius:2px; display:inline-block; }
+.pipe-l { font-size: 11.5px; color: rgba(255,255,255,.62); margin-top: 1px; white-space: nowrap; }
+.c-call    { background:#A9B4F5; }
+.c-demo    { background:var(--turmeric); }
+.c-given   { background:#6FD19F; }
+.c-changes { background:#F08A7E; }
+.c-redemo  { background:#F4B98A; }
+
+/* ══ TABS (bottom bar) ══ */
 .tabs {
-  display: flex; overflow-x: auto; scrollbar-width: none;
-  background: var(--card); border-bottom: 1px solid var(--line);
-  position: sticky; top: 0; z-index: 50; padding: 0 12px;
-  gap: 4px;
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px; z-index: 60;
+  display:grid; grid-template-columns: repeat(4,1fr);
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom,0px));
 }
-.tabs::-webkit-scrollbar { display: none; }
 .tab {
-  flex-shrink: 0; padding: 12px 14px; font-size: 13px; font-weight: 600;
-  color: var(--muted); cursor: pointer; border-bottom: 2.5px solid transparent;
-  transition: all 0.18s; background: none; border-top: none;
-  border-left: none; border-right: none;
-  font-family: inherit; white-space: nowrap;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding: 7px 2px; border:none; background:none; cursor:pointer;
+  font-size: 11.5px; font-weight: 600; color: var(--muted); border-radius: 12px;
+  transition: color .15s;
 }
-.tab.active { color: var(--navy); border-bottom-color: var(--navy); }
+.tab svg { width: 22px; height: 22px; }
+.tab.active { color: var(--indigo); }
+.tab.active svg { stroke-width: 2.4; }
+
+.fab {
+  position: fixed; z-index: 70;
+  right: max(18px, calc(50% - 215px + 18px));
+  bottom: calc(80px + env(safe-area-inset-bottom,0px));
+  height: 54px; padding: 0 20px 0 16px; border-radius: 18px; border:none; cursor:pointer;
+  background: var(--turmeric); color: var(--ink);
+  display:flex; align-items:center; gap:8px; font-size: 15px; font-weight: 700;
+  box-shadow: 0 10px 24px -8px rgba(160,105,10,.55), 0 2px 0 rgba(0,0,0,.06) inset;
+  transition: transform .15s;
+}
+.fab:active { transform: scale(.96); }
 
 /* ══ BODY ══ */
-.body { padding: 0 16px 110px; }
+.body { padding: 0 16px 160px; }
+.summary { display:none; }
 
-/* ══ SUMMARY ══ */
-.summary { margin: 16px 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.sum-card {
-  border-radius: 20px; padding: 20px 18px; position: relative; overflow: hidden;
-}
-.sum-card.plain {
-  background: var(--card); box-shadow: 0 1px 8px rgba(15,23,42,0.06);
-}
-.sum-card.hi {
-  background: var(--navy);
-  box-shadow: 0 8px 28px rgba(11,30,61,0.3);
-}
-/* grid pattern on hi card */
-.sum-card.hi::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-/* glowing dot top right */
-.sum-card.hi::after {
-  content: '';
-  position: absolute; top: -24px; right: -24px;
-  width: 90px; height: 90px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(26,86,219,0.7), transparent 70%);
-}
-.sum-num {
-  font-size: 48px; font-weight: 800; line-height: 1;
-  margin-bottom: 5px; letter-spacing: -2px; position: relative; z-index: 1;
-}
-.sum-card.plain .sum-num { color: var(--navy); }
-.sum-card.hi .sum-num { color: #fff; }
-.sum-label {
-  font-size: 12px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.6px; position: relative; z-index: 1;
-}
-.sum-card.plain .sum-label { color: var(--muted); }
-.sum-card.hi .sum-label { color: rgba(255,255,255,0.5); }
-
-/* ══ SEC LABEL ══ */
 .sec-label {
-  font-size: 12px; font-weight: 700; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 0.8px;
-  margin-bottom: 10px; padding-left: 2px;
+  font-size: 17px; font-weight: 700; color: var(--ink); letter-spacing: -.3px;
+  margin: 24px 0 10px 2px; display:flex; justify-content:space-between; align-items:baseline;
 }
+.sec-label small { font-size: 13px; font-weight: 500; color: var(--muted); }
 
 /* ══ LEAD LIST ══ */
 .lead-list {
-  display: flex; flex-direction: column;
-  background: var(--card); border-radius: 18px; overflow: hidden;
-  box-shadow: 0 1px 8px rgba(15,23,42,0.06);
+  background: var(--card); border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid var(--line);
 }
 .lead-row {
-  padding: 14px 16px; display: flex; align-items: center; gap: 13px;
-  cursor: pointer; transition: background 0.1s; position: relative;
+  padding: 13px 14px; display:flex; align-items:center; gap: 12px;
+  cursor: pointer; position: relative; transition: background .12s;
 }
 .lead-row:not(:last-child)::after {
-  content: ''; position: absolute; bottom: 0; left: 58px; right: 0;
-  height: 1px; background: var(--line);
+  content:''; position:absolute; bottom:0; left: 66px; right: 0; height:1px; background: var(--line);
 }
-.lead-row:active { background: var(--bg); }
+.lead-row:active { background: #F7F7F3; }
 
-/* icon bubble */
 .lead-icon {
-  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  width: 42px; height: 42px; border-radius: 13px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 15px; font-weight: 700; letter-spacing: -.3px;
 }
-.lead-icon.call    { background: #EFF6FF; }
-.lead-icon.demo    { background: #FFFBEB; }
-.lead-icon.given   { background: #ECFDF5; }
-.lead-icon.changes { background: #FEF2F2; }
-.lead-icon.redemo  { background: #ECFEFF; }
-.lead-icon.rejected{ background: #FDF2F8; }
-.lead-icon.cheque  { background: #ECFDF5; }
-.lead-icon.cash    { background: #FFFBEB; }
+.lead-icon.call    { background:#E6E9F8; color:#2B3784; }
+.lead-icon.demo    { background:#FBF0D4; color:#8A5A00; }
+.lead-icon.given   { background:#DDF0E5; color:#1F6045; }
+.lead-icon.changes { background:#F7E2DF; color:#9A2A22; }
+.lead-icon.redemo  { background:#FAE6D6; color:#9C4A12; }
+.lead-icon.rejected{ background:#ECECEE; color:#5B5E6B; }
+.lead-icon.cheque  { background:#DDF0E5; color:#1F6045; }
+.lead-icon.cash    { background:#FBF0D4; color:#8A5A00; }
+.lead-icon.overdue { background:#F7E2DF; color:#9A2A22; }
 
-.lead-info { flex: 1; min-width: 0; }
+.lead-info { flex:1; min-width:0; }
 .lead-name {
-  font-size: 15px; font-weight: 600; color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 15.5px; font-weight: 600; color: var(--ink); letter-spacing: -.2px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .lead-sub {
-  font-size: 12px; color: var(--muted); margin-top: 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 13px; color: var(--muted); margin-top: 2px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.lead-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.lead-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
 .lead-tag {
-  font-size: 11px; font-weight: 700; padding: 3px 10px;
-  border-radius: 20px; white-space: nowrap; letter-spacing: 0.2px;
+  font-size: 12px; font-weight: 600; padding: 3px 9px 3px 8px; border-radius: 8px;
+  white-space: nowrap; display:inline-flex; align-items:center; gap:5px;
 }
-.lead-tag.call     { background: #DBEAFE; color: #1E40AF; }
-.lead-tag.demo     { background: #FEF3C7; color: #92400E; }
-.lead-tag.cheque   { background: #D1FAE5; color: #065F46; }
-.lead-tag.cash     { background: #FEF3C7; color: #92400E; }
-.lead-tag.rejected { background: #FCE7F3; color: #9D174D; }
-.lead-tag.given    { background: #D1FAE5; color: #065F46; }
-.lead-tag.changes  { background: #FEE2E2; color: #991B1B; }
-.lead-tag.redemo   { background: #CFFAFE; color: #164E63; }
-.lead-date { font-size: 11px; color: var(--muted); }
+.lead-tag::before { content:''; width:6px; height:6px; border-radius:2px; background: currentColor; opacity:.85; }
+.lead-tag.call     { background:#E6E9F8; color:#2B3784; }
+.lead-tag.demo     { background:#FBF0D4; color:#8A5A00; }
+.lead-tag.given    { background:#DDF0E5; color:#1F6045; }
+.lead-tag.changes  { background:#F7E2DF; color:#9A2A22; }
+.lead-tag.redemo   { background:#FAE6D6; color:#9C4A12; }
+.lead-tag.rejected { background:#F7E2DF; color:#9A2A22; }
+.lead-tag.cheque   { background:#DDF0E5; color:#1F6045; }
+.lead-tag.cash     { background:#FBF0D4; color:#8A5A00; }
+.lead-date { font-size: 12px; color: var(--muted); }
 
 /* ══ MAINT ALERT ══ */
+#maint-alerts:not(:empty) { margin-top: 18px; display:flex; flex-direction:column; gap:8px; }
 .maint-alert {
-  background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px;
-  padding: 14px 16px; margin-bottom: 14px;
-  display: flex; align-items: center; gap: 12px;
+  background: #FDF4DE; border-radius: var(--r-md); padding: 12px 14px;
+  display:flex; align-items:center; gap: 12px; border-left: 4px solid var(--turmeric);
 }
-.maint-alert-icon { font-size: 22px; flex-shrink: 0; }
-.maint-alert-text strong { color: #92400E; display: block; font-size: 14px; font-weight: 700; }
-.maint-alert-text span { color: #B45309; font-size: 12px; }
+.maint-alert-icon {
+  width: 34px; height: 34px; border-radius: 10px; background: var(--turmeric); color: var(--ink);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.maint-alert-text strong { color: var(--ink); display:block; font-size: 14.5px; font-weight: 700; }
+.maint-alert-text span { color: #7A5410; font-size: 13px; }
 
 /* ══ CHIPS ══ */
-.chip-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 12px; }
-.chip-row::-webkit-scrollbar { display: none; }
+.chip-row { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin-bottom: 10px; }
+.chip-row::-webkit-scrollbar { display:none; }
+.st-row { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin-bottom: 14px; }
+.st-row::-webkit-scrollbar { display:none; }
 .chip {
-  flex-shrink: 0; padding: 7px 16px; border-radius: 22px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  background: var(--card); color: var(--muted); border: none;
-  transition: all 0.15s; font-family: inherit;
-  box-shadow: 0 1px 4px rgba(15,23,42,0.08);
+  flex-shrink:0; padding: 7px 13px; border-radius: 10px;
+  font-size: 13.5px; font-weight: 600; cursor: pointer;
+  background: var(--card); color: var(--ink2); border: 1px solid var(--line);
+  transition: background .15s, color .15s;
 }
-.chip.active { background: var(--navy); color: #fff; box-shadow: 0 4px 12px rgba(11,30,61,0.25); }
+.chip.active { background: var(--indigo); color:#fff; border-color: var(--indigo); }
 
 /* ══ SEARCH ══ */
-.search-wrap { position: relative; margin: 12px 0 14px; }
-.search-wrap svg {
-  position: absolute; left: 14px; top: 50%;
-  transform: translateY(-50%); color: var(--muted); pointer-events: none;
-}
+.search-wrap { position: relative; margin: 18px 0 12px; }
+.search-wrap svg { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; }
 .search-input {
-  width: 100%; padding: 13px 36px 13px 42px;
-  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-  color: var(--ink); font-size: 15px; font-family: inherit; outline: none;
-  transition: border-color 0.15s;
+  width:100%; padding: 14px 40px 14px 42px;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--r-md);
+  color: var(--ink); font-size: 15.5px; outline:none; transition: border-color .15s, box-shadow .15s;
 }
-.search-input:focus { border-color: var(--navy); }
+.search-input:focus { border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(31,42,107,.1); }
 .search-input::placeholder { color: var(--muted); }
 .search-clear {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  background: var(--muted); border: none; color: #fff; font-size: 11px;
-  cursor: pointer; display: none; width: 18px; height: 18px;
-  border-radius: 50%; line-height: 18px; text-align: center; padding: 0;
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  background: var(--muted); border:none; color:#fff; font-size: 13px;
+  cursor:pointer; display:none; width:20px; height:20px; border-radius:50%; line-height:20px; text-align:center; padding:0;
 }
 
 /* ══ EMPTY ══ */
-.empty { text-align: center; padding: 48px 24px; color: var(--muted); font-size: 15px; }
+.empty { text-align:center; padding: 40px 24px; color: var(--muted); font-size: 15px; line-height:1.45; }
+.empty b { display:block; color: var(--ink2); font-weight: 600; margin-bottom: 2px; }
 
-/* ══ OVERLAY ══ */
+/* ══ OVERLAY / SHEET ══ */
 .overlay {
-  position: fixed; inset: 0; background: rgba(11,30,61,0.45); z-index: 200;
-  display: flex; align-items: flex-end; opacity: 0; pointer-events: none;
-  transition: opacity 0.2s; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  position: fixed; inset: 0; background: rgba(21,23,31,.45); z-index: 200;
+  display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none;
+  transition: opacity .2s; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
-.overlay.open { opacity: 1; pointer-events: all; }
+.overlay.open { opacity:1; pointer-events:all; }
 .sheet {
-  background: var(--card); border-radius: 24px 24px 0 0;
-  padding: 0 20px calc(36px + env(safe-area-inset-bottom,0px));
-  width: 100%; max-height: 92vh; overflow-y: auto;
-  transform: translateY(100%);
-  transition: transform 0.3s cubic-bezier(.32,.72,0,1);
+  background: var(--card); border-radius: 26px 26px 0 0;
+  padding: 0 20px calc(28px + env(safe-area-inset-bottom,0px));
+  width: 100%; max-width: 430px; max-height: 92vh; overflow-y: auto;
+  transform: translateY(100%); transition: transform .32s cubic-bezier(.32,.72,0,1);
 }
 .overlay.open .sheet { transform: translateY(0); }
-.handle { width: 36px; height: 4px; background: var(--line); border-radius: 4px; margin: 12px auto 20px; }
-.sheet-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; color: var(--navy); letter-spacing: -0.5px; }
+.handle { width: 38px; height: 5px; background: var(--line); border-radius: 4px; margin: 10px auto 18px; }
+.sheet-title { font-size: 24px; font-weight: 700; margin-bottom: 18px; color: var(--ink); letter-spacing: -.7px; }
 
 /* ══ FIELDS ══ */
 .field { margin-bottom: 14px; }
-.field label {
-  font-size: 11px; font-weight: 700; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 0.6px; display: block; margin-bottom: 7px;
-}
+.field label { font-size: 13px; font-weight: 600; color: var(--ink2); display:block; margin-bottom: 6px; }
 .field input, .field select {
-  width: 100%; padding: 13px 14px; background: var(--bg);
-  border: 1px solid var(--line); border-radius: 12px; color: var(--ink);
-  font-size: 15px; font-family: inherit; outline: none;
-  -webkit-appearance: none; appearance: none; transition: border-color 0.15s;
+  width:100%; padding: 13px 14px; background: var(--paper);
+  border: 1px solid transparent; border-radius: 12px; color: var(--ink);
+  font-size: 16px; outline:none; -webkit-appearance:none; appearance:none;
+  transition: border-color .15s, background .15s;
 }
-.field input:focus, .field select:focus { border-color: var(--navy); background: #fff; }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field select {
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%238A8E99' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position: right 14px center;
+}
+.field input:focus, .field select:focus { border-color: var(--indigo); background-color: #fff; }
+.two { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* ══ BUTTONS ══ */
 .btn-primary {
-  width: 100%; padding: 15px; background: var(--navy); color: #fff;
-  border: none; border-radius: 14px; font-size: 16px; font-weight: 700;
-  cursor: pointer; font-family: inherit; margin-bottom: 10px;
-  box-shadow: 0 4px 16px rgba(11,30,61,0.2); transition: opacity 0.1s;
+  width:100%; padding: 15px; background: var(--indigo); color:#fff;
+  border:none; border-radius: var(--r-md); font-size: 16px; font-weight: 700;
+  cursor:pointer; margin-bottom: 10px; transition: transform .1s, opacity .1s;
 }
-.btn-primary:active { opacity: 0.8; }
+.btn-primary:active { transform: scale(.985); opacity:.9; }
 .btn-ghost {
-  width: 100%; padding: 14px; background: var(--bg); color: var(--ink);
-  border: none; border-radius: 14px; font-size: 16px; font-weight: 500;
-  cursor: pointer; font-family: inherit; transition: opacity 0.1s; margin-bottom:0;
+  width:100%; padding: 14px; background: var(--paper); color: var(--ink);
+  border: none; border-radius: var(--r-md); font-size: 16px; font-weight: 600;
+  cursor:pointer; transition: opacity .1s; margin-bottom: 0;
 }
-.btn-ghost:active { opacity: 0.7; }
+.btn-ghost:active { opacity:.7; }
 .btn-danger {
-  width: 100%; padding: 14px; background: #FEF2F2; color: var(--red);
-  border: none; border-radius: 14px; font-size: 16px; font-weight: 600;
-  cursor: pointer; font-family: inherit; margin-bottom: 10px;
+  width:100%; padding: 14px; background: #F7E2DF; color: var(--madder);
+  border:none; border-radius: var(--r-md); font-size: 16px; font-weight: 600;
+  cursor:pointer; margin-bottom: 10px;
 }
 
 /* ══ DETAIL ══ */
-.detail-name { font-size: 28px; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; margin-bottom: 3px; }
-.detail-co { font-size: 15px; color: var(--muted); margin-bottom: 20px; }
-.detail-section { background: var(--bg); border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
-.detail-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 13px 15px; position: relative; font-size: 15px;
-}
-.detail-row:not(:last-child)::after {
-  content: ''; position: absolute; bottom: 0; left: 15px; right: 0;
-  height: 1px; background: var(--line);
-}
-.detail-row span:first-child { color: var(--muted); font-size: 14px; }
-.detail-row span:last-child { font-weight: 600; color: var(--ink); max-width: 58%; text-align: right; font-size:14px; }
-.d-actions { margin-top: 16px; display: flex; flex-direction: column; }
+.detail-name { font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: -1px; line-height:1.1; margin-bottom: 4px; }
+.detail-co { font-size: 15px; color: var(--muted); margin-bottom: 18px; }
+.detail-section { background: var(--paper); border-radius: var(--r-md); overflow:hidden; margin-bottom: 12px; }
+.detail-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding: 13px 15px; position:relative; }
+.detail-row:not(:last-child)::after { content:''; position:absolute; bottom:0; left:15px; right:0; height:1px; background: var(--line); }
+.detail-row > span:first-child { color: var(--muted); font-size: 14px; flex-shrink:0; }
+.detail-row > span:last-child { font-weight: 600; color: var(--ink); max-width: 62%; text-align:right; font-size: 14.5px; }
+.d-actions { margin-top: 14px; display:flex; flex-direction:column; }
+.detail-row > span.lead-tag.call{color:#2B3784}.detail-row > span.lead-tag.demo,.detail-row > span.lead-tag.cash{color:#8A5A00}.detail-row > span.lead-tag.given,.detail-row > span.lead-tag.cheque{color:#1F6045}.detail-row > span.lead-tag.changes,.detail-row > span.lead-tag.rejected{color:#9A2A22}.detail-row > span.lead-tag.redemo{color:#9C4A12}
+#d-action-btns a.btn-ghost:first-child { background: var(--leaf); color:#fff; font-weight:700; }
 
 /* ══ REJECT BOX ══ */
-.reject-box { background: #FEF2F2; border-radius: 14px; padding: 16px; margin-bottom: 10px; display: none; }
-.reject-box-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 14px; }
-.rrow { display: flex; gap: 8px; }
-.rrow button { flex: 1; margin-bottom: 0; }
+.reject-box { background: #FBEDEA; border-radius: var(--r-md); padding: 16px; margin-bottom: 10px; display:none; }
+.reject-box .field input, .reject-box .field select { background-color:#fff; }
+.reject-box-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+.rrow { display:flex; gap: 8px; }
+.rrow button { flex:1; margin-bottom:0; }
 
 /* ══ TOAST ══ */
 .toast {
-  position: fixed; top: 56px; left: 50%;
+  position: fixed; top: calc(14px + env(safe-area-inset-top,0px)); left: 50%;
   transform: translateX(-50%) translateY(-90px);
-  background: var(--navy); color: #fff;
-  padding: 11px 22px; border-radius: 22px;
-  font-size: 14px; font-weight: 600; z-index: 999;
-  transition: transform 0.3s cubic-bezier(.32,.72,0,1); white-space: nowrap;
-  box-shadow: 0 8px 24px rgba(11,30,61,0.3);
+  background: var(--ink); color:#fff; padding: 11px 18px; border-radius: 14px;
+  font-size: 14.5px; font-weight: 600; z-index: 999; white-space: nowrap;
+  transition: transform .3s cubic-bezier(.32,.72,0,1);
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,.4);
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
-.panel { display: none; }
-.panel.active { display: block; }
+.panel { display:none; }
+.panel.active { display:block; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
 </style>
 </head>
 <body>
-
-
 
 <!-- ══ MAIN APP ══ -->
 <div id="app">
 
 <div class="hdr">
   <div class="hdr-top">
-    <div>
-      <div class="brand-sm">DemoTrack</div>
-      <div class="brand-lg">Equal</div>
-      <div class="greeting" id="greeting"></div>
+    <div class="brand">
+      <span class="brand-lg">Equal</span>
+      <span class="brand-sm">Demo tracker</span>
     </div>
     <div class="hdr-btns">
-      <button class="icon-btn secondary" id="refreshBtn" onclick="refreshData()">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-      </button>
-      <button class="icon-btn primary" onclick="openAdd()">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <div class="fb-status"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Connecting...</span></div>
+      <button class="icon-btn" id="refreshBtn" onclick="refreshData()" aria-label="Refresh">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
       </button>
     </div>
   </div>
-  <div class="fb-status"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Connecting...</span></div>
-</div>
 
-<div class="tabs" id="tabs">
-  <button class="tab active" onclick="go('today')">Today</button>
-  <button class="tab" onclick="go('leads')">All Leads</button>
-  <button class="tab" onclick="go('rejected')">Rejected</button>
-  <button class="tab" onclick="go('maint')">Maintenance</button>
+  <div class="hero">
+    <div class="hero-date" id="today-date"></div>
+    <div class="greeting" id="greeting"></div>
+    <div class="hero-line"><b id="s-demos">0</b> <span id="w-demos">demos</span> today and <b id="s-calls">0</b> <span id="w-calls">people</span> to call.</div>
+  </div>
+
+  <div class="pipe">
+    <div class="pipe-bar" id="pipe-bar"></div>
+    <div class="pipe-legend" id="pipe-legend"></div>
+  </div>
 </div>
 
 <div class="body">
 
   <!-- TODAY -->
   <div id="p-today" class="panel active">
-    <div class="summary">
-      <div class="sum-card hi">
-        <div class="sum-num" id="s-demos">0</div>
-        <div class="sum-label">Demos Today</div>
-      </div>
-      <div class="sum-card plain">
-        <div class="sum-num" id="s-calls">0</div>
-        <div class="sum-label">To Call</div>
-      </div>
-    </div>
     <div id="maint-alerts"></div>
-    <div class="sec-label">Demos Scheduled</div>
+    <div class="sec-label">Today's demos <small id="today-count"></small></div>
     <div class="lead-list" id="today-list"></div>
   </div>
 
@@ -398,62 +384,85 @@ body {
   <div id="p-leads" class="panel">
     <div class="search-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="search-input" id="search-input" type="text" placeholder="Search name, company, software..." oninput="onSearch(this.value)">
-      <button class="search-clear" id="search-clear" onclick="clearSearch()">×</button>
+      <input class="search-input" id="search-input" type="text" placeholder="Search name, company, software, phone" oninput="onSearch(this.value)">
+      <button class="search-clear" id="search-clear" onclick="clearSearch()" aria-label="Clear search">×</button>
+    </div>
+    <div class="st-row">
+      <button class="chip active" data-st="all" onclick="setStFilter('all',this)">All</button>
+      <button class="chip" data-st="call" onclick="setStFilter('call',this)">To call</button>
+      <button class="chip" data-st="demo" onclick="setStFilter('demo',this)">Demo scheduled</button>
+      <button class="chip" data-st="given" onclick="setStFilter('given',this)">Demo given</button>
+      <button class="chip" data-st="changes" onclick="setStFilter('changes',this)">Changes</button>
+      <button class="chip" data-st="redemo" onclick="setStFilter('redemo',this)">Re-demo</button>
     </div>
     <div class="chip-row" id="date-chips"></div>
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-      <button class="chip active" onclick="setStFilter('all',this)">All</button>
-      <button class="chip" onclick="setStFilter('call',this)">To Call</button>
-      <button class="chip" onclick="setStFilter('demo',this)">Demo Scheduled</button>
-      <button class="chip" onclick="setStFilter('given',this)">Demo Given</button>
-      <button class="chip" onclick="setStFilter('changes',this)">Changes</button>
-      <button class="chip" onclick="setStFilter('redemo',this)">Re-Demo</button>
-    </div>
     <div class="lead-list" id="leads-list"></div>
   </div>
 
   <!-- REJECTED -->
   <div id="p-rejected" class="panel">
-    <div style="height:18px;"></div>
-    <div class="sec-label">Rejected Leads</div>
+    <div class="sec-label">Rejected leads <small id="rej-count"></small></div>
     <div class="lead-list" id="rejected-list"></div>
   </div>
 
   <!-- MAINTENANCE (closed cash only) -->
   <div id="p-maint" class="panel">
-    <div style="height:18px;"></div>
-    <div class="sec-label">Cash clients — 1 year cycle</div>
+    <div class="sec-label">Cash clients, yearly maintenance <small id="maint-count"></small></div>
     <div class="lead-list" id="maint-list"></div>
   </div>
 
 </div>
+
+<nav class="tabs" id="tabs">
+  <button class="tab active" onclick="go('today')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+    Today
+  </button>
+  <button class="tab" onclick="go('leads')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.8a3.3 3.3 0 0 1 0 6.4M18.5 14.8c1.6.8 2.6 2.5 3 5.2"/></svg>
+    Leads
+  </button>
+  <button class="tab" onclick="go('rejected')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5.7 5.7l12.6 12.6"/></svg>
+    Rejected
+  </button>
+  <button class="tab" onclick="go('maint')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4.5h-4.5"/><path d="M12 8v4l2.5 2"/></svg>
+    Maintenance
+  </button>
+</nav>
+
+<button class="fab" onclick="openAdd()" aria-label="Add lead">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  New lead
+</button>
+
 </div><!-- end #app -->
 
 <!-- ADD LEAD -->
 <div class="overlay" id="addOv">
   <div class="sheet">
     <div class="handle"></div>
-    <div class="sheet-title">New Lead</div>
+    <div class="sheet-title">New lead</div>
     <div class="field"><label>Name</label><input id="f-name" type="text" placeholder="Ramesh Patel"></div>
     <div class="field"><label>Company</label><input id="f-co" type="text" placeholder="Patel Traders"></div>
     <div class="field"><label>Phone</label><input id="f-ph" type="tel" placeholder="98765 43210"></div>
-    <div class="field"><label>Software</label><input id="f-sw" type="text" placeholder="e.g. Loom, Acc Dyeing, Billing..."></div>
-    <div class="field"><label>Reference Person</label><input id="f-ref" type="text" placeholder="Who referred this lead?"></div>
+    <div class="field"><label>Software</label><input id="f-sw" type="text" placeholder="Loom, Acc Dyeing, Billing..."></div>
+    <div class="field"><label>Referred by</label><input id="f-ref" type="text" placeholder="Who referred this lead?"></div>
     <div class="field"><label>Status</label>
       <select id="f-st" onchange="handleAdd()">
-        <option value="call">To Call</option>
-        <option value="demo">Demo Scheduled</option>
-        <option value="given">Demo Given</option>
-        <option value="changes">Changes Requested</option>
-        <option value="redemo">Re-Demo Scheduled</option>
+        <option value="call">To call</option>
+        <option value="demo">Demo scheduled</option>
+        <option value="given">Demo given</option>
+        <option value="changes">Changes requested</option>
+        <option value="redemo">Re-demo scheduled</option>
         <option value="closed">Closed</option>
       </select>
     </div>
     <div id="f-demo-wrap" style="display:none;">
       <div class="two">
-        <div class="field"><label>Demo Date</label><input id="f-dd" type="date"></div>
-        <div class="field"><label>Demo Type</label>
+        <div class="field"><label>Demo date</label><input id="f-dd" type="date"></div>
+        <div class="field"><label>Demo type</label>
           <select id="f-dtype"><option value="offline">Offline</option><option value="online">Online</option></select>
         </div>
       </div>
@@ -465,10 +474,10 @@ body {
         </div>
         <div class="field"><label>Amount ₹</label><input id="f-amt" type="number" placeholder="25000"></div>
       </div>
-      <div class="field"><label>Closing Date</label><input id="f-cd" type="date"></div>
+      <div class="field"><label>Closing date</label><input id="f-cd" type="date"></div>
     </div>
-    <div class="field"><label>Notes</label><input id="f-notes" type="text" placeholder="Optional..."></div>
-    <button class="btn-primary" onclick="saveLead()">Save Lead</button>
+    <div class="field"><label>Notes</label><input id="f-notes" type="text" placeholder="Optional"></div>
+    <button class="btn-primary" onclick="saveLead()">Save lead</button>
     <button class="btn-ghost" onclick="closeAdd()">Cancel</button>
   </div>
 </div>
@@ -497,12 +506,12 @@ body {
           </select>
         </div>
         <div class="field" style="margin-bottom:14px;">
-          <label>Extra Notes (optional)</label>
-          <input type="text" id="r-notes" placeholder="Any additional info...">
+          <label>Extra notes (optional)</label>
+          <input type="text" id="r-notes" placeholder="Any additional info">
         </div>
         <div class="rrow">
-          <button class="btn-ghost" onclick="document.getElementById('d-reject-box').style.display='none'">Cancel</button>
-          <button class="btn-primary" style="margin:0;background:var(--red);" onclick="confirmReject()">Confirm</button>
+          <button class="btn-ghost" style="background:#fff;" onclick="document.getElementById('d-reject-box').style.display='none'">Cancel</button>
+          <button class="btn-primary" style="margin:0;background:var(--madder);" onclick="confirmReject()">Mark rejected</button>
         </div>
       </div>
       <div id="d-reject-btn-wrap"></div>
@@ -518,18 +527,18 @@ body {
     <input type="hidden" id="u-id">
     <div class="field"><label>Status</label>
       <select id="u-st" onchange="handleUpd()">
-        <option value="call">To Call</option>
-        <option value="demo">Demo Scheduled</option>
-        <option value="given">Demo Given</option>
-        <option value="changes">Changes Requested</option>
-        <option value="redemo">Re-Demo Scheduled</option>
+        <option value="call">To call</option>
+        <option value="demo">Demo scheduled</option>
+        <option value="given">Demo given</option>
+        <option value="changes">Changes requested</option>
+        <option value="redemo">Re-demo scheduled</option>
         <option value="closed">Closed</option>
       </select>
     </div>
     <div id="u-dd-wrap" style="display:none;">
       <div class="two">
-        <div class="field"><label>Demo Date</label><input id="u-dd" type="date"></div>
-        <div class="field"><label>Demo Type</label>
+        <div class="field"><label>Demo date</label><input id="u-dd" type="date"></div>
+        <div class="field"><label>Demo type</label>
           <select id="u-dtype"><option value="offline">Offline</option><option value="online">Online</option></select>
         </div>
       </div>
@@ -541,9 +550,9 @@ body {
         </div>
         <div class="field"><label>Amount ₹</label><input id="u-amt" type="number"></div>
       </div>
-      <div class="field"><label>Closing Date</label><input id="u-cd" type="date"></div>
+      <div class="field"><label>Closing date</label><input id="u-cd" type="date"></div>
     </div>
-    <button class="btn-primary" onclick="saveUpd()">Update</button>
+    <button class="btn-primary" onclick="saveUpd()">Update status</button>
     <button class="btn-ghost" onclick="closeUpd()">Cancel</button>
   </div>
 </div>
@@ -553,28 +562,28 @@ body {
 <div class="overlay" id="editOv">
   <div class="sheet">
     <div class="handle"></div>
-    <div class="sheet-title">Edit Lead</div>
+    <div class="sheet-title">Edit lead</div>
     <input type="hidden" id="e-id">
     <div class="field"><label>Name</label><input id="e-name" type="text"></div>
     <div class="field"><label>Company</label><input id="e-co" type="text"></div>
     <div class="field"><label>Phone</label><input id="e-ph" type="tel"></div>
-    <div class="field"><label>Software</label><input id="e-sw" type="text" placeholder="e.g. Loom, Acc Dyeing, Billing..."></div>
-    <div class="field"><label>Reference Person</label><input id="e-ref" type="text"></div>
+    <div class="field"><label>Software</label><input id="e-sw" type="text" placeholder="Loom, Acc Dyeing, Billing..."></div>
+    <div class="field"><label>Referred by</label><input id="e-ref" type="text"></div>
     <div class="field"><label>Status</label>
       <select id="e-st" onchange="handleEdit()">
-        <option value="call">To Call</option>
-        <option value="demo">Demo Scheduled</option>
-        <option value="given">Demo Given</option>
-        <option value="changes">Changes Requested</option>
-        <option value="redemo">Re-Demo Scheduled</option>
+        <option value="call">To call</option>
+        <option value="demo">Demo scheduled</option>
+        <option value="given">Demo given</option>
+        <option value="changes">Changes requested</option>
+        <option value="redemo">Re-demo scheduled</option>
         <option value="closed">Closed</option>
         <option value="rejected">Rejected</option>
       </select>
     </div>
     <div id="e-demo-wrap" style="display:none;">
       <div class="two">
-        <div class="field"><label>Demo Date</label><input id="e-dd" type="date"></div>
-        <div class="field"><label>Demo Type</label>
+        <div class="field"><label>Demo date</label><input id="e-dd" type="date"></div>
+        <div class="field"><label>Demo type</label>
           <select id="e-dtype"><option value="offline">Offline</option><option value="online">Online</option></select>
         </div>
       </div>
@@ -586,10 +595,10 @@ body {
         </div>
         <div class="field"><label>Amount ₹</label><input id="e-amt" type="number"></div>
       </div>
-      <div class="field"><label>Closing Date</label><input id="e-cd" type="date"></div>
+      <div class="field"><label>Closing date</label><input id="e-cd" type="date"></div>
     </div>
-    <div class="field"><label>Notes</label><input id="e-notes" type="text" placeholder="Optional..."></div>
-    <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+    <div class="field"><label>Notes</label><input id="e-notes" type="text" placeholder="Optional"></div>
+    <button class="btn-primary" onclick="saveEdit()">Save changes</button>
     <button class="btn-ghost" onclick="closeEdit()">Cancel</button>
   </div>
 </div>
@@ -623,6 +632,7 @@ function deleteLead(id){_bridge.deleteLead&&_bridge.deleteLead(id)}
 function onSearch(v){_bridge.onSearch&&_bridge.onSearch(v)}
 function clearSearch(){_bridge.clearSearch&&_bridge.clearSearch()}
 function refreshData(){_bridge.refreshData&&_bridge.refreshData()}
+function pipeJump(s){_bridge.pipeJump&&_bridge.pipeJump(s)}
 </script>
 
 <!-- Firebase SDK -->
@@ -631,7 +641,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── HELPERS ──
-const td  = () => new Date().toISOString().split('T')[0];
+const td  = () => { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
 const fmt = d => { if(!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}); };
 const fmtY= d => { if(!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); };
 const mDate=l => {
@@ -648,9 +658,11 @@ const mDate=l => {
 };
 const dl  = l => { const m=mDate(l); if(!m) return null; return Math.ceil((m-new Date())/86400000); };
 const fmtDate = d => d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+const initials = n => (n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
 
 const hr=new Date().getHours();
-document.getElementById('greeting').innerHTML=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', <strong style="color:var(--ink);font-weight:700;">Nilesh</strong> 👋';
+document.getElementById('greeting').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', Nilesh';
+document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
 
 let leads=[], db=null, rejectId=null, stFilter='all', dtFilter='all', searchQ='';
 
@@ -680,7 +692,7 @@ setFbStatus('connecting','Connecting...');
 
 onSnapshot(collection(db,'leads'), snap => {
   leads = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  setFbStatus('live','Live • '+leads.length+' leads');
+  setFbStatus('live','Live · '+leads.length);
   render();
 }, err => {
   setFbStatus('error','Error: '+err.code);
@@ -699,56 +711,76 @@ _bridge.go = window.go = function(tab) {
 
 // ── TAG ──
 function tagFor(l) {
-  if(l.st==='call')     return {cls:'call',     txt:'To Call'};
+  if(l.st==='call')     return {cls:'call',     txt:'To call'};
   if(l.st==='demo')     return {cls:'demo',     txt:'Demo'};
-  if(l.st==='given')    return {cls:'given',    txt:'Demo Given'};
+  if(l.st==='given')    return {cls:'given',    txt:'Demo given'};
   if(l.st==='changes')  return {cls:'changes',  txt:'Changes'};
-  if(l.st==='redemo')   return {cls:'redemo',   txt:'Re-Demo'};
+  if(l.st==='redemo')   return {cls:'redemo',   txt:'Re-demo'};
   if(l.st==='rejected') return {cls:'rejected', txt:'Rejected'};
   return l.pay==='cheque'?{cls:'cheque',txt:'Cheque'}:{cls:'cash',txt:'Cash'};
 }
 
 // ── ROW HTML ──
-const statusIcon={call:'📞',demo:'💻',given:'✅',changes:'⚙️',redemo:'🔄',rejected:'✗',cheque:'📋',cash:'💰'};
 function rowHTML(l) {
   const t=tagFor(l);
   const parts=[l.co,l.sw,l.dd?(l.dd===td()?'Today':fmt(l.dd)):null].filter(Boolean);
   const typeLabel=l.dtype&&(l.st==='demo'||l.st==='redemo')?' · '+l.dtype.charAt(0).toUpperCase()+l.dtype.slice(1):'';
-  const icon=statusIcon[l.st]||'•';
   return `<div class="lead-row" onclick="openDetail('${l.id}')">
-    <div class="lead-icon ${t.cls}">${icon}</div>
+    <div class="lead-icon ${t.cls}">${initials(l.name)}</div>
     <div class="lead-info">
       <div class="lead-name">${l.name}</div>
-      <div class="lead-sub">${parts.join(' · ')}</div>
+      <div class="lead-sub">${parts.join(', ')}</div>
     </div>
     <div class="lead-right">
       <div class="lead-tag ${t.cls}">${t.txt}${typeLabel}</div>
-      <div class="lead-date">${l.ph?l.ph.slice(-4):''}</div>
+      <div class="lead-date">${l.ph?'…'+l.ph.slice(-4):''}</div>
     </div>
   </div>`;
 }
+
+// ── PIPELINE (header) ──
+const PIPE=[['call','To call'],['demo','Demo'],['given','Given'],['changes','Changes'],['redemo','Re-demo']];
+function renderPipe() {
+  const counts=PIPE.map(([k])=>leads.filter(l=>l.st===k).length);
+  const total=counts.reduce((a,b)=>a+b,0);
+  document.getElementById('pipe-bar').innerHTML=PIPE.map(([k,lbl],i)=>
+    `<button class="pipe-seg c-${k}" style="flex-grow:${total?counts[i]:1}" onclick="pipeJump('${k}')" aria-label="${lbl}: ${counts[i]}"></button>`).join('');
+  document.getElementById('pipe-legend').innerHTML=PIPE.map(([k,lbl],i)=>
+    `<button class="pipe-item" onclick="pipeJump('${k}')"><div class="pipe-n"><i class="c-${k}"></i>${counts[i]}</div><div class="pipe-l">${lbl}</div></button>`).join('');
+}
+_bridge.pipeJump = function(s) {
+  go('leads');
+  const btn=document.querySelector(`#p-leads .st-row .chip[data-st="${s}"]`);
+  if(btn) setStFilter(s,btn);
+};
 
 // ── RENDER ──
 function render() {
   const t=td();
 
   // Stats
-  document.getElementById('s-demos').textContent=leads.filter(l=>l.dd===t&&l.st==='demo').length;
-  document.getElementById('s-calls').textContent=leads.filter(l=>l.st==='call').length;
+  const nDemos=leads.filter(l=>l.dd===t&&(l.st==='demo'||l.st==='redemo')).length;
+  const nCalls=leads.filter(l=>l.st==='call').length;
+  document.getElementById('s-demos').textContent=nDemos;
+  document.getElementById('s-calls').textContent=nCalls;
+  document.getElementById('w-demos').textContent=nDemos===1?'demo':'demos';
+  document.getElementById('w-calls').textContent=nCalls===1?'person':'people';
+  renderPipe();
 
   // Maint alerts
   const due=leads.filter(l=>l.pay==='cash'&&l.cd).map(l=>({l,d:dl(l)})).filter(x=>x.d!=null&&x.d>=0&&x.d<=30);
   document.getElementById('maint-alerts').innerHTML=due.map(({l,d})=>
-    `<div class="maint-alert"><div class="maint-alert-icon">⚠️</div><div class="maint-alert-text"><strong>${l.name}</strong><span>${l.co||''} · Maintenance ${d===0?'today':'in '+d+' days'}</span></div></div>`).join('');
+    `<div class="maint-alert" onclick="openDetail('${l.id}')"><div class="maint-alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4.5h-4.5"/></svg></div><div class="maint-alert-text"><strong>${l.name}</strong><span>${l.co?l.co+', ':''}maintenance due ${d===0?'today':'in '+d+' days'}</span></div></div>`).join('');
 
   // Today demos
-  const demos=leads.filter(l=>l.dd===t&&l.st==='demo');
-  document.getElementById('today-list').innerHTML=demos.length?demos.map(rowHTML).join(''):`<div class="empty">No demos scheduled today</div>`;
+  const demos=leads.filter(l=>l.dd===t&&(l.st==='demo'||l.st==='redemo'));
+  document.getElementById('today-count').textContent=demos.length?demos.length+' scheduled':'';
+  document.getElementById('today-list').innerHTML=demos.length?demos.map(rowHTML).join(''):`<div class="empty"><b>No demos today</b>Schedule one from a lead, or tap New lead.</div>`;
 
   // All leads (call + demo only — NOT closed or rejected)
   const dates=[...new Set(leads.filter(l=>['call','demo','given','changes','redemo'].includes(l.st)).map(l=>l.dd).filter(Boolean))].sort().reverse();
   document.getElementById('date-chips').innerHTML=
-    `<button class="chip ${dtFilter==='all'?'active':''}" onclick="setDtFilter('all')">All</button>`+
+    `<button class="chip ${dtFilter==='all'?'active':''}" onclick="setDtFilter('all')">Any date</button>`+
     dates.map(d=>`<button class="chip ${dtFilter===d?'active':''}" onclick="setDtFilter('${d}')">${d===t?'Today':fmt(d)}</button>`).join('');
 
   let active=leads.filter(l=>['call','demo','given','changes','redemo'].includes(l.st));
@@ -758,44 +790,46 @@ function render() {
     const q=searchQ.toLowerCase();
     active=active.filter(l=>(l.name||'').toLowerCase().includes(q)||(l.co||'').toLowerCase().includes(q)||(l.sw||'').toLowerCase().includes(q)||(l.ph||'').includes(q));
   }
-  document.getElementById('leads-list').innerHTML=active.length?active.map(rowHTML).join(''):`<div class="empty">No leads found</div>`;
+  document.getElementById('leads-list').innerHTML=active.length?active.map(rowHTML).join(''):`<div class="empty"><b>No leads match</b>Try another filter or clear the search.</div>`;
 
   // Rejected tab
   const rej=leads.filter(l=>l.st==='rejected');
+  document.getElementById('rej-count').textContent=rej.length||'';
   document.getElementById('rejected-list').innerHTML=rej.length?rej.map(l=>{
-    return `<div class="lead-row s-${t.cls}" onclick="openDetail('${l.id}')">
-      <div class="dot rejected"></div>
+    return `<div class="lead-row" onclick="openDetail('${l.id}')">
+      <div class="lead-icon rejected">${initials(l.name)}</div>
       <div class="lead-info">
         <div class="lead-name">${l.name}</div>
-        <div class="lead-sub">${[l.co,l.sw,l.rejectReason].filter(Boolean).join(' · ')}</div>
+        <div class="lead-sub">${[l.co,l.sw,l.rejectReason].filter(Boolean).join(', ')}</div>
       </div>
       <div class="lead-right">
         <div class="lead-tag rejected">Rejected</div>
-        <div class="lead-date">${l.ph?l.ph.slice(-4):''}</div>
+        <div class="lead-date">${l.ph?'…'+l.ph.slice(-4):''}</div>
       </div>
     </div>`;
-  }).join(''):`<div class="empty">No rejected leads</div>`;
+  }).join(''):`<div class="empty"><b>No rejected leads</b>Leads you mark as rejected show up here with the reason.</div>`;
 
   // Maintenance (closed cash only)
   const cash=leads.filter(l=>l.st==='closed'&&l.pay==='cash'&&l.cd).sort((a,b)=>(dl(a)||9999)-(dl(b)||9999));
+  document.getElementById('maint-count').textContent=cash.length||'';
   document.getElementById('maint-list').innerHTML=cash.length?cash.map(l=>{
     const d=dl(l),m=mDate(l),ov=d!=null&&d<0;
-    return `<div class="lead-row s-${t.cls}" onclick="openDetail('${l.id}')">
-      <div class="dot ${ov?'maint':'cash'}"></div>
+    return `<div class="lead-row" onclick="openDetail('${l.id}')">
+      <div class="lead-icon ${ov?'overdue':'cash'}">${initials(l.name)}</div>
       <div class="lead-info">
         <div class="lead-name">${l.name}</div>
-        <div class="lead-sub">${l.co||''} · Due ${fmtDate(m)}</div>
+        <div class="lead-sub">${l.co?l.co+', ':''}due ${fmtDate(m)}</div>
       </div>
       <div class="lead-right">
         <div class="lead-tag ${ov?'rejected':'cash'}">${d==null?'—':ov?'Overdue':d===0?'Today':d+'d left'}</div>
         <div class="lead-date">₹${Number(l.amt||0).toLocaleString('en-IN')}</div>
       </div>
     </div>`;
-  }).join(''):`<div class="empty">No cash clients yet</div>`;
+  }).join(''):`<div class="empty"><b>No cash clients yet</b>Leads closed with cash payment appear here for yearly maintenance.</div>`;
 }
 
 _bridge.setDtFilter = window.setDtFilter = d=>{dtFilter=d;render();};
-_bridge.setStFilter = window.setStFilter = (s,btn)=>{stFilter=s;document.querySelectorAll('#p-leads .chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();};
+_bridge.setStFilter = window.setStFilter = (s,btn)=>{stFilter=s;document.querySelectorAll('#p-leads .st-row .chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();};
 
 // ── DETAIL ──
 _bridge.openDetail = window.openDetail = function(id) {
@@ -806,35 +840,35 @@ _bridge.openDetail = window.openDetail = function(id) {
   document.getElementById('d-reject-box').style.display='none';
   const t=tagFor(l),d=dl(l),m=mDate(l);
   document.getElementById('d-rows').innerHTML=`<div class="detail-section">
-    <div class="detail-row"><span>Phone</span><span><a href="tel:${l.ph}" style="color:var(--accent);font-weight:500;">${l.ph}</a></span></div>
+    <div class="detail-row"><span>Phone</span><span><a href="tel:${l.ph}" style="color:var(--accent);font-weight:600;text-decoration:none;">${l.ph}</a></span></div>
     <div class="detail-row"><span>Status</span><span class="lead-tag ${t.cls}">${t.txt}</span></div>
     ${l.sw?`<div class="detail-row"><span>Software</span><span>${l.sw}</span></div>`:''}
-    ${l.ref?`<div class="detail-row"><span>Reference</span><span>${l.ref}</span></div>`:''}
-    ${l.dd?`<div class="detail-row"><span>Demo Date</span><span>${fmtY(l.dd)}${l.dtype?' · '+l.dtype.charAt(0).toUpperCase()+l.dtype.slice(1):''}</span></div>`:''}
+    ${l.ref?`<div class="detail-row"><span>Referred by</span><span>${l.ref}</span></div>`:''}
+    ${l.dd?`<div class="detail-row"><span>Demo date</span><span>${fmtY(l.dd)}${l.dtype?', '+l.dtype.charAt(0).toUpperCase()+l.dtype.slice(1):''}</span></div>`:''}
     ${l.amt?`<div class="detail-row"><span>Amount</span><span>₹${Number(l.amt).toLocaleString('en-IN')}</span></div>`:''}
-    ${l.cd?`<div class="detail-row"><span>Closed On</span><span>${fmtY(l.cd)}</span></div>`:''}
+    ${l.cd?`<div class="detail-row"><span>Closed on</span><span>${fmtY(l.cd)}</span></div>`:''}
     ${m?`<div class="detail-row"><span>Maintenance</span><span style="color:${d!=null&&d<=30?'var(--red)':'inherit'}">${fmtDate(m)}${d!=null?' ('+d+'d)':''}</span></div>`:''}
-    ${l.rejectReason?`<div class="detail-row"><span>Rejected — Reason</span><span style="color:var(--red)">${l.rejectReason}</span></div>`:''}
-    ${l.rejectNotes?`<div class="detail-row"><span>Reject Notes</span><span>${l.rejectNotes}</span></div>`:''}
+    ${l.rejectReason?`<div class="detail-row"><span>Reject reason</span><span style="color:var(--red)">${l.rejectReason}</span></div>`:''}
+    ${l.rejectNotes?`<div class="detail-row"><span>Reject notes</span><span>${l.rejectNotes}</span></div>`:''}
     ${l.notes?`<div class="detail-row"><span>Notes</span><span>${l.notes}</span></div>`:''}
   </div>`;
   const isActive = ['call','demo','given','changes','redemo'].includes(l.st);
   document.getElementById('d-action-btns').innerHTML=`
-    <a href="tel:${l.ph}" class="btn-ghost" style="margin-bottom:10px;display:block;text-align:center;text-decoration:none;">📞 Call</a>
-    ${isActive?`<button class="btn-primary" onclick="closeDetail();openUpd('${l.id}')">Update Status</button>`:''}
-    <button class="btn-ghost" style="margin-bottom:10px;" onclick="closeDetail();openEdit('${l.id}')">✏️ Edit Entry</button>
-    ${l.pay==='cash'&&d!=null&&d<=30?`<button class="btn-ghost" style="margin-bottom:10px;border-color:var(--green);color:var(--green);" onclick="markDone('${l.id}')">✅ Maintenance Done</button>`:''}
+    <a href="tel:${l.ph}" class="btn-ghost" style="margin-bottom:10px;display:block;text-align:center;text-decoration:none;">Call ${l.name.split(' ')[0]}</a>
+    ${isActive?`<button class="btn-primary" onclick="closeDetail();openUpd('${l.id}')">Update status</button>`:''}
+    <button class="btn-ghost" style="margin-bottom:10px;" onclick="closeDetail();openEdit('${l.id}')">Edit lead</button>
+    ${l.pay==='cash'&&d!=null&&d<=30?`<button class="btn-ghost" style="margin-bottom:10px;background:#DDF0E5;color:var(--green);" onclick="markDone('${l.id}')">Mark maintenance done</button>`:''}
   `;
   document.getElementById('d-reject-btn-wrap').innerHTML=`
-    ${isActive?`<button class="btn-danger" onclick="document.getElementById('d-reject-box').style.display='block';document.getElementById('r-notes').value=''">✕ Mark as Rejected</button>`:''}
-    <div id="d-delete-confirm" style="display:none;background:#FAEAE9;border-radius:14px;padding:16px;margin-bottom:10px;">
-      <p style="font-size:13px;color:var(--red);font-weight:600;margin-bottom:12px;">Delete this entry permanently?</p>
+    ${isActive?`<button class="btn-danger" onclick="document.getElementById('d-reject-box').style.display='block';document.getElementById('r-notes').value=''">Mark as rejected</button>`:''}
+    <div id="d-delete-confirm" style="display:none;background:#FBEDEA;border-radius:14px;padding:16px;margin-bottom:10px;">
+      <p style="font-size:14px;color:var(--red);font-weight:600;margin-bottom:12px;">Delete this lead permanently? This can't be undone.</p>
       <div style="display:flex;gap:10px;">
-        <button class="btn-ghost" style="margin:0;flex:1;" onclick="document.getElementById('d-delete-confirm').style.display='none'">Cancel</button>
+        <button class="btn-ghost" style="margin:0;flex:1;background:#fff;" onclick="document.getElementById('d-delete-confirm').style.display='none'">Cancel</button>
         <button class="btn-primary" style="margin:0;flex:1;background:var(--red);" onclick="deleteLead('${l.id}')">Delete</button>
       </div>
     </div>
-    <button class="btn-ghost" style="color:#C0392B;border-color:#f0c8c5;margin-top:6px;" onclick="document.getElementById('d-delete-confirm').style.display='block'">🗑 Delete Entry</button>
+    <button class="btn-ghost" style="background:none;color:var(--muted);font-size:14px;margin-top:2px;" onclick="document.getElementById('d-delete-confirm').style.display='block'">Delete lead</button>
   `;
   document.getElementById('detOv').classList.add('open');
 };
@@ -878,29 +912,29 @@ _bridge.saveEdit = window.saveEdit = async function() {
   const id=document.getElementById('e-id').value;
   const name=document.getElementById('e-name').value.trim();
   const ph=document.getElementById('e-ph').value.trim();
-  if(!name||!ph){showToast('Name & phone required');return;}
+  if(!name||!ph){showToast('Name and phone are required');return;}
   const st=document.getElementById('e-st').value;
   const data={
     name, co:document.getElementById('e-co').value.trim(), ph,
     sw:document.getElementById('e-sw').value.trim(),
     ref:document.getElementById('e-ref').value.trim(),
     st,
-    dd:st==='demo'?document.getElementById('e-dd').value:null,
-    dtype:st==='demo'?document.getElementById('e-dtype').value:null,
+    dd:(st==='demo'||st==='redemo')?document.getElementById('e-dd').value:null,
+    dtype:(st==='demo'||st==='redemo')?document.getElementById('e-dtype').value:null,
     pay:st==='closed'?document.getElementById('e-pay').value:null,
     amt:st==='closed'?document.getElementById('e-amt').value:null,
     cd:st==='closed'?document.getElementById('e-cd').value:null,
     notes:document.getElementById('e-notes').value.trim(),
   };
   await updateLead(id, data);
-  closeEdit(); showToast('Entry updated');
+  closeEdit(); showToast('Lead updated');
 };
 
 // ── DELETE ──
 _bridge.deleteLead = window.deleteLead = async function(id) {
   if(!db) return;
   await deleteDoc(doc(db,'leads',id));
-  closeDetail(); showToast('Entry deleted');
+  closeDetail(); showToast('Lead deleted');
 };
 
 // ── ADD ──
@@ -924,7 +958,7 @@ _bridge.handleAdd = window.handleAdd=()=>{
 _bridge.saveLead = window.saveLead = async function() {
   const name=document.getElementById('f-name').value.trim();
   const ph=document.getElementById('f-ph').value.trim();
-  if(!name||!ph){showToast('Name & phone required');return;}
+  if(!name||!ph){showToast('Name and phone are required');return;}
   const st=document.getElementById('f-st').value;
   const lead={
     name, co:document.getElementById('f-co').value.trim(), ph,
@@ -970,19 +1004,19 @@ _bridge.saveUpd = window.saveUpd = async function() {
   if(st==='demo'||st==='redemo'){data.dd=document.getElementById('u-dd').value;data.dtype=document.getElementById('u-dtype').value;}
   if(st==='closed'){data.pay=document.getElementById('u-pay').value;data.amt=document.getElementById('u-amt').value;data.cd=document.getElementById('u-cd').value;}
   await updateLead(id,data);
-  closeUpd(); showToast('Updated');
+  closeUpd(); showToast('Status updated');
 };
 
 _bridge.markDone = window.markDone = async function(id) {
   await updateLead(id,{cd:td()});
-  closeDetail(); showToast('Maintenance reset ✓');
+  closeDetail(); showToast('Maintenance marked done');
 };
 
 async function updateLead(id, data) {
   await updateDoc(doc(db,'leads',id), data);
 }
 
-// ── TOAST ──
+// ── SEARCH ──
 _bridge.showToast = _bridge.onSearch = window.onSearch = function(val) {
   searchQ=val.trim();
   const clr=document.getElementById('search-clear');
@@ -1001,7 +1035,7 @@ function renderLeadsList() {
   const t=td();
   const dates=[...new Set(leads.filter(l=>['call','demo','given','changes','redemo'].includes(l.st)).map(l=>l.dd).filter(Boolean))].sort().reverse();
   document.getElementById('date-chips').innerHTML=
-    `<button class="chip ${dtFilter==='all'?'active':''}" onclick="setDtFilter('all')">All</button>`+
+    `<button class="chip ${dtFilter==='all'?'active':''}" onclick="setDtFilter('all')">Any date</button>`+
     dates.map(d=>`<button class="chip ${dtFilter===d?'active':''}" onclick="setDtFilter('${d}')">${d===t?'Today':fmt(d)}</button>`).join('');
   let active=leads.filter(l=>['call','demo','given','changes','redemo'].includes(l.st));
   if(dtFilter!=='all') active=active.filter(l=>l.dd===dtFilter);
@@ -1010,7 +1044,7 @@ function renderLeadsList() {
     const q=searchQ.toLowerCase();
     active=active.filter(l=>(l.name||'').toLowerCase().includes(q)||(l.co||'').toLowerCase().includes(q)||(l.sw||'').toLowerCase().includes(q)||(l.ph||'').includes(q));
   }
-  document.getElementById('leads-list').innerHTML=active.length?active.map(rowHTML).join(''):`<div class="empty">No leads found</div>`;
+  document.getElementById('leads-list').innerHTML=active.length?active.map(rowHTML).join(''):`<div class="empty"><b>No leads match</b>Try another filter or clear the search.</div>`;
 }
 
 _bridge.refreshData = window.refreshData = function() {
